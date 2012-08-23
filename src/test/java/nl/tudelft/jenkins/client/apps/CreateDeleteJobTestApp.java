@@ -14,9 +14,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateJobTestApp {
+public class CreateDeleteJobTestApp {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CreateJobTestApp.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CreateDeleteJobTestApp.class);
 
 	public static void main(final String[] args) throws Exception {
 

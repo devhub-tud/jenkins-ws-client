@@ -11,9 +11,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RetrieveJobConfigTest {
+public class RetrieveJobConfigTestApp {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RetrieveJobConfigTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RetrieveJobConfigTestApp.class);
 
 	public static void main(final String[] args) throws Exception {
 

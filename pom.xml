@@ -17,6 +17,8 @@
 		<version.apache.httpclient>4.2.1</version.apache.httpclient>
 		<version.google.guava>13.0</version.google.guava>
 		<version.google.gson>2.2.2</version.google.gson>
+		<version.jdom>2.0.2</version.jdom>
+		<version.jaxen>1.1.4</version.jaxen>
 
 		<version.hamcrest>1.3</version.hamcrest>
 		<version.junit>4.10</version.junit>
@@ -29,6 +31,12 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<version>${version.slf4j-api}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${version.slf4j-api}</version>
 		</dependency>
 
@@ -48,6 +56,12 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>${version.apache.httpclient}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -60,6 +74,18 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>${version.google.gson}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>${version.jdom}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>${version.jaxen}</version>
 		</dependency>
 
 		<dependency>
