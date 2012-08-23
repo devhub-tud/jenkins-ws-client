@@ -25,9 +25,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class TestApp {
+public class AuthenticationTestApp {
 
-	public static final Logger LOG = LoggerFactory.getLogger(TestApp.class);
+	public static final Logger LOG = LoggerFactory.getLogger(AuthenticationTestApp.class);
 
 	private static final String HOSTNAME = "dea.hartveld.com";
 	private static final int PORT = 80;
