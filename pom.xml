@@ -9,14 +9,17 @@
 	<name>Java wrapper for the Jenkins web service API</name>
 
 	<properties>
-		<version.java>1.6</version.java>
+		<version.java>1.7</version.java>
 
 		<version.slf4j-api>1.6.6</version.slf4j-api>
 		<version.logback-classic>1.0.6</version.logback-classic>
-		<version.apache.commons-lang3>3.1</version.apache.commons-lang3>
+		<version.apache.commons.lang3>3.1</version.apache.commons.lang3>
+		<version.apache.commons.io>2.4</version.apache.commons.io>
 		<version.apache.httpclient>4.2.1</version.apache.httpclient>
 		<version.google.guava>13.0</version.google.guava>
 		<version.google.gson>2.2.2</version.google.gson>
+		<version.google.guice>3.0</version.google.guice>
+		<version.jclouds>1.5.0-beta.11</version.jclouds>
 		<version.jdom>2.0.2</version.jdom>
 		<version.jaxen>1.1.4</version.jaxen>
 
@@ -49,7 +52,13 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>${version.apache.commons-lang3}</version>
+			<version>${version.apache.commons.lang3}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${version.apache.commons.io}</version>
 		</dependency>
 
 		<dependency>
@@ -74,6 +83,18 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>${version.google.gson}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>${version.google.guice}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jclouds.labs</groupId>
+			<artifactId>jenkins</artifactId>
+			<version>${version.jclouds}</version>
 		</dependency>
 
 		<dependency>

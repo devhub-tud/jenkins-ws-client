@@ -12,9 +12,9 @@ import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DOM4JTestApp {
+public class JDOMTestApp {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DOM4JTestApp.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JDOMTestApp.class);
 
 	public static void main(final String[] args) throws Exception {
 
@@ -49,4 +49,5 @@ public class DOM4JTestApp {
 		LOG.info("Finished.");
 
 	}
+
 }

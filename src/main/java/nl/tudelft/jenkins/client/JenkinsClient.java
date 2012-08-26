@@ -1,16 +1,19 @@
 package nl.tudelft.jenkins.client;
 
-import nl.tudelft.jenkins.Job;
-import nl.tudelft.jenkins.User;
+import nl.tudelft.jenkins.jobs.Job;
 
-public interface JenkinsClient {
+import com.google.inject.ImplementedBy;
 
-	Job createJob(User owner, String name);
+@ImplementedBy(JenkinsClientImpl.class)
+public interface JenkinsClient extends AutoCloseable {
 
-	Job retrieveJob(String name);
+	Job createJob(String name, String scmUrl);
 
-	Job allowJobAccessFor(Job job, User user);
+	Job retrieveJob(String jobName);
 
 	void deleteJob(Job job);
+
+	@Override
+	public void close();
 
 }
