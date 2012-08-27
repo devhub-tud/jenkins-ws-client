@@ -4,8 +4,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import nl.tudelft.jenkins.auth.User;
+import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.jobs.Job;
 import nl.tudelft.jenkins.jobs.JobImpl;
 
@@ -27,7 +31,7 @@ public class JenkinsClientImpl implements JenkinsClient {
 	@Inject
 	public JenkinsClientImpl(final RestContext<JenkinsApi, JenkinsAsyncApi> restContext) {
 
-		LOG.trace("Initializing Jenkins client...");
+		LOG.trace("Initializing Jenkins client ...");
 
 		this.restContext = checkNotNull(restContext, "restContext must be non-null");
 		jobApi = restContext.getApi().getJobApi();
@@ -35,7 +39,7 @@ public class JenkinsClientImpl implements JenkinsClient {
 	}
 
 	@Override
-	public Job createJob(final String name, final String scmUrl) {
+	public Job createJob(final String name, final String scmUrl, final List<User> users) {
 
 		LOG.trace("Creating job {} @ {} ...", name, scmUrl);
 
@@ -58,7 +62,14 @@ public class JenkinsClientImpl implements JenkinsClient {
 
 		LOG.trace("Retrieving job {} ...", name);
 
+		checkArgument(isNotEmpty(name), "name must be non-empty");
+
 		final String xml = jobApi.fetchConfigXML(name);
+
+		if (xml == null) {
+			throw new NoSuchJobException(name);
+		}
+
 		final Job job = JobImpl.fromXml(name, xml);
 
 		return job;

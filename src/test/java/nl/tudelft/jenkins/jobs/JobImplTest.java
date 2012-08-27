@@ -1,24 +1,37 @@
 package nl.tudelft.jenkins.jobs;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
 
+import nl.tudelft.jenkins.auth.User;
+import nl.tudelft.jenkins.auth.UserImpl;
+
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
+import org.junit.Before;
 import org.junit.Test;
 
 public class JobImplTest {
 
 	private static final String JOB_NAME = "X";
+	private static final String JOB_SCM_URL = "git://xyz";
+	private static final User JOB_NOTIFICATION_RECIPIENT0 = new UserImpl("person", "person@example.com");
+	private static final User JOB_NOTIFICATION_RECIPIENT1 = new UserImpl("other", "other@otherexample.com");
+	private Job job;
+
+	@Before
+	public void setUp() {
+		job = new JobImpl(JOB_NAME);
+	}
 
 	@Test
 	public void testThatNewlyConsructedJobAsXmlReturnsDefaultJobConfiguration() throws Exception {
 
-		final Job job = new JobImpl(JOB_NAME);
 		final String jobAsXml = job.asXml();
 
 		final SAXBuilder builder = new SAXBuilder();
@@ -40,6 +53,41 @@ public class JobImplTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testThatConstructorWithEmptyNameArgumentThrowsException() {
 		new JobImpl("");
+	}
+
+	@Test
+	public void testThatScmUrlIsSetCorrectly() throws Exception {
+
+		job.setScmUrl(JOB_SCM_URL);
+
+		final String xml = job.asXml();
+
+		assertThat(xml, containsString("<url>" + JOB_SCM_URL + "</url>"));
+
+	}
+
+	@Test
+	public void testThatSingleRecipientCanBeSet() throws Exception {
+
+		job.setNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
+
+		final String xml = job.asXml();
+
+		assertThat(xml, containsString("<recipients>" + JOB_NOTIFICATION_RECIPIENT0.getEmail() + "</recipients>"));
+
+	}
+
+	@Test
+	public void testThatSecondRecipientCanBeAdded() throws Exception {
+
+		job.setNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
+
+		job.addNotificationRecipient(JOB_NOTIFICATION_RECIPIENT1);
+
+		final String xml = job.asXml();
+
+		assertThat(xml, containsString("<recipients>" + JOB_NOTIFICATION_RECIPIENT0.getEmail() + " " + JOB_NOTIFICATION_RECIPIENT1.getEmail() + "</recipients>"));
+
 	}
 
 }

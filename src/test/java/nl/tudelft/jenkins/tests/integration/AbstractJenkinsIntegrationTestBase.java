@@ -3,7 +3,12 @@ package nl.tudelft.jenkins.tests.integration;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.util.List;
+
+import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.client.JenkinsClient;
+import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.guice.JenkinsWsClientGuiceModule;
 import nl.tudelft.jenkins.jobs.Job;
 
@@ -35,22 +40,29 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	@After
 	public void tearDown() {
 
-		final Job job = retrieveJob();
-		deleteJob(job);
+		LOG.trace("Cleaning up job ...");
+
+		try
+		{
+			final Job job = retrieveJob();
+			deleteJob(job);
+		} catch (final NoSuchJobException e) {
+			LOG.trace("Job was already cleaned up");
+		}
 
 		client.close();
 
 	}
 
 	public final String getJobName() {
-		return "job-" + this.getClass().getCanonicalName();
+		return "test-job-" + this.getClass().getCanonicalName();
 	}
 
-	protected final Job createJob(final String scmUrl) {
+	protected final Job createJob(final String scmUrl, final List<User> users) {
 
 		LOG.trace("Creating job with name: {}, scmUrl: {} ...", getJobName(), scmUrl);
 
-		final Job job = client.createJob(getJobName(), scmUrl);
+		final Job job = client.createJob(getJobName(), scmUrl, users);
 
 		assertThatJobNameIsCorrectForCurrentTest(job);
 
@@ -59,7 +71,11 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	}
 
 	protected final Job retrieveJob() {
+
+		LOG.trace("Retrieving job with name: {} ...", getJobName());
+
 		return client.retrieveJob(getJobName());
+
 	}
 
 	protected final void deleteJob(final Job job) {

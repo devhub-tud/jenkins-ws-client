@@ -6,13 +6,19 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.InputStream;
 
+import nl.tudelft.jenkins.auth.User;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
+import org.jdom2.filter.Filters;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +28,10 @@ public class JobImpl implements Job {
 
 	private final String name;
 	private final Document document;
+
+	private static final String XPATH_NOTIFICATION_RECIPIENTS = "//maven2-moduleset/reporters/hudson.maven.reporters.MavenMailer/recipients";
+
+	private static final String XPATH_SCM_GIT_URL = "//maven2-moduleset/scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url";
 
 	public JobImpl(final String name) {
 		this(name, JobDocumentProvider.createDefaultJobDocument());
@@ -44,13 +54,42 @@ public class JobImpl implements Job {
 	@Override
 	public void setScmUrl(final String scmUrl) {
 
-		final Element root = document.getRootElement();
-		final Element scm = root.getChild("scm");
-		final Element userRemoteConfigs = scm.getChild("userRemoteConfigs");
-		final Element gitConfig = userRemoteConfigs.getChild("hudson.plugins.git.UserRemoteConfig");
-		final Element url = gitConfig.getChild("url");
+		checkArgument(isNotEmpty(scmUrl), "scmUrl must be non-empty");
+
+		final Element url = findSingleElementInDocumentByXPath(XPATH_SCM_GIT_URL);
 
 		url.setContent(new Text(scmUrl));
+
+	}
+
+	@Override
+	public void setNotificationRecipient(final User recipient) {
+
+		checkNotNull(recipient, "recipient must be non-null");
+
+		final Element recipients = findSingleElementInDocumentByXPath(XPATH_NOTIFICATION_RECIPIENTS);
+
+		recipients.setContent(new Text(recipient.getEmail()));
+
+	}
+
+	@Override
+	public void addNotificationRecipient(final User recipient) {
+
+		checkNotNull(recipient, "recipient must be non-null");
+
+		final Element recipients = findSingleElementInDocumentByXPath(XPATH_NOTIFICATION_RECIPIENTS);
+
+		final int contentSize = recipients.getContentSize();
+		if (contentSize == 0) {
+			recipients.setContent(new Text(recipient.getEmail()));
+		} else if (contentSize == 1) {
+			final Content content = recipients.getContent(0);
+			final String value = content.getValue();
+			recipients.setContent(new Text(value + " " + recipient.getEmail()));
+		} else {
+			throw new RuntimeException("Element on path " + XPATH_NOTIFICATION_RECIPIENTS + " contains multiple children. Single (text) element expected");
+		}
 
 	}
 
@@ -77,7 +116,26 @@ public class JobImpl implements Job {
 
 	}
 
+	private Element findSingleElementInDocumentByXPath(final String xPath) {
+
+		final XPathFactory xPathFactory = XPathFactory.instance();
+		final XPathExpression<Element> xPathExpression = xPathFactory.compile(xPath, Filters.element());
+		final Element element = xPathExpression.evaluateFirst(document);
+
+		if (element == null) {
+			throw new RuntimeException("Document does not contain element on path: " + xPath);
+		}
+
+		return element;
+
+	}
+
 	public static Job fromXml(final String name, final String xml) {
+
+		LOG.trace("Creating job named {} from xml ...", name);
+
+		checkArgument(isNotEmpty(name), "name must be non-empty");
+		checkArgument(isNotEmpty(xml), "xml must be non-empty");
 
 		final InputStream is = IOUtils.toInputStream(xml);
 
