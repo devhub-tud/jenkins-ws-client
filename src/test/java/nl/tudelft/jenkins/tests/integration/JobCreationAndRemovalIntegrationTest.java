@@ -1,10 +1,14 @@
 package nl.tudelft.jenkins.tests.integration;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.auth.UserImpl;
+import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.jobs.Job;
 
 import org.junit.Test;
@@ -28,7 +32,7 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 	}
 
 	@Test
-	public void testCreationAndDeletionOfJob() {
+	public void testThatCreationAndDeletionOfJobWorks() {
 
 		LOG.debug("Testing creation, then deletion of job ...");
 
@@ -37,6 +41,26 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 		job = retrieveJob();
 
 		deleteJob(job);
+
+	}
+
+	@Test
+	public void testThatRetrievalOfNonExistingJobThrowsException() {
+
+		LOG.debug("Testing deletion of non-existing job ...");
+
+		final Job job = createJob(JOB_SCM_URL, USERS);
+
+		deleteJob(job);
+
+		boolean exceptionWasThrown = false;
+		try {
+			retrieveJob();
+		} catch (final NoSuchJobException e) {
+			exceptionWasThrown = true;
+		}
+
+		assertThat(exceptionWasThrown, is(true));
 
 	}
 

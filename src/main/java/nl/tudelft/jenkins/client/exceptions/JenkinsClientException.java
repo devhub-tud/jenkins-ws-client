@@ -1,5 +1,8 @@
 package nl.tudelft.jenkins.client.exceptions;
 
+/**
+ * Top class in the exception class hierarchy.
+ */
 @SuppressWarnings("serial")
 public class JenkinsClientException extends RuntimeException {
 
