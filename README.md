@@ -24,5 +24,5 @@ Make sure to release all acquired resources with the **JenkinsClient.close()** m
 
 	client.close();
 
-The JenkinsClient class is AutoCloseable, so it can be used in a try-with-resources pattern.
+The JenkinsClient class is [AutoCloseable](http://docs.oracle.com/javase/7/docs/api/java/lang/AutoCloseable.html), so it can be used in a try-with-resources pattern.
 
