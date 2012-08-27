@@ -149,4 +149,14 @@
 
 	</build>
 
+	<distributionManagement>
+
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Internal snapshots</name>
+			<url>http://dea.hartveld.com/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+
+	</distributionManagement>
+
 </project>
