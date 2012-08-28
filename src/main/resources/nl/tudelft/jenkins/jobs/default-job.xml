@@ -69,7 +69,14 @@
       <perModuleEmail>true</perModuleEmail>
     </hudson.maven.reporters.MavenMailer>
   </reporters>
-  <publishers/>
+  <publishers>
+    <hudson.plugins.sonar.SonarPublisher>
+      <branch></branch>
+      <language></language>
+      <mavenOpts></mavenOpts>
+      <jobAdditionalProperties></jobAdditionalProperties>
+    </hudson.plugins.sonar.SonarPublisher>
+  </publishers>
   <buildWrappers/>
   <prebuilders/>
   <postbuilders/>
