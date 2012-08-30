@@ -211,7 +211,7 @@
 	<distributionManagement>
 
 		<snapshotRepository>
-			<id>snapshots</id>
+			<id>devhub-snapshots</id>
 			<name>Internal snapshots</name>
 			<url>http://dea.hartveld.com/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
