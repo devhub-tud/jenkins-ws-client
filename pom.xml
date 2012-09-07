@@ -11,8 +11,8 @@
 	<properties>
 		<version.java>1.7</version.java>
 
-		<version.slf4j-api>1.6.6</version.slf4j-api>
-		<version.logback-classic>1.0.6</version.logback-classic>
+		<version.slf4j-api>1.7.0</version.slf4j-api>
+		<version.logback-classic>1.0.7</version.logback-classic>
 		<version.apache.commons.lang3>3.1</version.apache.commons.lang3>
 		<version.apache.commons.io>2.4</version.apache.commons.io>
 		<version.apache.httpclient>4.2.1</version.apache.httpclient>
