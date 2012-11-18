@@ -221,6 +221,12 @@
 			<url>http://dea.hartveld.com/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 
+		<repository>
+			<id>devhub-releases</id>
+			<name>Internal releases</name>
+			<url>htttp://dea.hartveld.com/nexus/content/repositories/releases</url>
+		</repository>
+
 	</distributionManagement>
 
 </project>
