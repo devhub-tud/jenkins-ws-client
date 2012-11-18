@@ -1,5 +1,7 @@
 package nl.tudelft.jenkins.tests.integration;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -12,6 +14,7 @@ import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.guice.JenkinsWsClientGuiceModule;
 import nl.tudelft.jenkins.jobs.Job;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -24,6 +27,8 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractJenkinsIntegrationTestBase.class);
 
+	protected static final String JOB_SCM_URL = "git://xyz";
+
 	private Injector injector;
 
 	private JenkinsClient client;
@@ -31,7 +36,7 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	@Before
 	public void setUp() {
 
-		injector = Guice.createInjector(new JenkinsWsClientGuiceModule());
+		injector = Guice.createInjector(new JenkinsWsClientGuiceModule("192.168.56.101", 8080, "david", "x"));
 
 		client = injector.getInstance(JenkinsClient.class);
 
@@ -75,6 +80,17 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 		LOG.trace("Retrieving job with name: {} ...", getJobName());
 
 		return client.retrieveJob(getJobName());
+
+	}
+
+	protected void updateJob(Job job) {
+
+		LOG.trace("Updating job with name: {} ...", getJobName());
+
+		checkNotNull(job, "job");
+		checkArgument(StringUtils.equals(job.getName(), getJobName()), "Job name not equal to test case job name");
+
+		client.updateJob(job);
 
 	}
 

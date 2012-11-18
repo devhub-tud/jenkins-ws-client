@@ -5,10 +5,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.InputStream;
+import java.util.List;
 
 import nl.tudelft.jenkins.auth.User;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jdom2.Content;
@@ -29,8 +31,10 @@ public class JobImpl implements Job {
 	private final String name;
 	private final Document document;
 
-	private static final String XPATH_NOTIFICATION_RECIPIENTS = "//maven2-moduleset/reporters/hudson.maven.reporters.MavenMailer/recipients";
+	private final JobPermissionMatrix permissionMatrix;
 
+	private static final String XPATH_PROPERTIES_SECURITY = "//maven2-moduleset/properties/hudson.security.AuthorizationMatrixProperty";
+	private static final String XPATH_NOTIFICATION_RECIPIENTS = "//maven2-moduleset/reporters/hudson.maven.reporters.MavenMailer/recipients";
 	private static final String XPATH_SCM_GIT_URL = "//maven2-moduleset/scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url";
 
 	public JobImpl(final String name) {
@@ -43,6 +47,9 @@ public class JobImpl implements Job {
 
 		this.name = name;
 		this.document = checkNotNull(document, "document must be non-null");
+
+		final Element element = findSingleElementInDocumentByXPath(XPATH_PROPERTIES_SECURITY);
+		permissionMatrix = JobPermissionMatrixImpl.fromElement(element);
 
 	}
 
@@ -60,6 +67,36 @@ public class JobImpl implements Job {
 
 		url.setContent(new Text(scmUrl));
 
+	}
+
+	@Override
+	public String getScmUrl() {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public List<User> getUsers() {
+		return permissionMatrix.getUsers();
+	}
+
+	@Override
+	public void addUser(User user) {
+		checkNotNull(user, "user");
+
+		addFullPermissionsForUser(user);
+	}
+
+	private void addFullPermissionsForUser(User user) {
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_BUILD);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_CANCEL);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_CONFIGURE);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DELETE);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DISCOVER);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_READ);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_WORKSPACE);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.RUN_DELETE);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.RUN_UPDATE);
+		permissionMatrix.addPermission(user, JobAuthMatrixPermission.SCM_TAG);
 	}
 
 	@Override
@@ -116,20 +153,6 @@ public class JobImpl implements Job {
 
 	}
 
-	private Element findSingleElementInDocumentByXPath(final String xPath) {
-
-		final XPathFactory xPathFactory = XPathFactory.instance();
-		final XPathExpression<Element> xPathExpression = xPathFactory.compile(xPath, Filters.element());
-		final Element element = xPathExpression.evaluateFirst(document);
-
-		if (element == null) {
-			throw new RuntimeException("Document does not contain element on path: " + xPath);
-		}
-
-		return element;
-
-	}
-
 	public static Job fromXml(final String name, final String xml) {
 
 		LOG.trace("Creating job named {} from xml ...", name);
@@ -142,6 +165,20 @@ public class JobImpl implements Job {
 		final Document document = JobDocumentProvider.createJobDocumentFrom(is);
 
 		return new JobImpl(name, document);
+
+	}
+
+	private Element findSingleElementInDocumentByXPath(final String xPath) {
+
+		final XPathFactory xPathFactory = XPathFactory.instance();
+		final XPathExpression<Element> xPathExpression = xPathFactory.compile(xPath, Filters.element());
+		final Element element = xPathExpression.evaluateFirst(document);
+
+		if (element == null) {
+			throw new RuntimeException("Document does not contain element on path: " + xPath);
+		}
+
+		return element;
 
 	}
 

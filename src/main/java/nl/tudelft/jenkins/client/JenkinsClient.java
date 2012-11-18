@@ -34,6 +34,13 @@ public interface JenkinsClient extends AutoCloseable {
 	Job retrieveJob(String jobName);
 
 	/**
+	 * Update the configuration of an existing build job.
+	 * 
+	 * @param job A representation of the job configuration.
+	 */
+	void updateJob(Job job);
+
+	/**
 	 * Delete an existing build job.
 	 * 
 	 * @param job The {@link Job} instance representing the job.

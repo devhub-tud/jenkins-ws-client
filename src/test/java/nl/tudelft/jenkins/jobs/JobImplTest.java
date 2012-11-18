@@ -2,10 +2,12 @@ package nl.tudelft.jenkins.jobs;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
+import java.util.List;
 
 import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.auth.UserImpl;
@@ -81,13 +83,25 @@ public class JobImplTest {
 	public void testThatSecondRecipientCanBeAdded() throws Exception {
 
 		job.setNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
-
 		job.addNotificationRecipient(JOB_NOTIFICATION_RECIPIENT1);
 
 		final String xml = job.asXml();
 
 		assertThat(xml, containsString("<recipients>" + JOB_NOTIFICATION_RECIPIENT0.getEmail() + " " + JOB_NOTIFICATION_RECIPIENT1.getEmail() + "</recipients>"));
 
+	}
+
+	@Test
+	public void testThatUserCanBeAdded() throws Exception {
+		User user = new UserImpl("name", "email");
+		job.addUser(user);
+
+		List<User> users = job.getUsers();
+
+		assertThat(users, hasSize(1));
+
+		User u = users.iterator().next();
+		assertThat(u.getName(), is(equalTo(user.getName())));
 	}
 
 }
