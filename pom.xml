@@ -222,7 +222,7 @@
 		</snapshotRepository>
 
 		<repository>
-			<id>devhub-releases</id>
+			<id>devhub-snapshots</id>
 			<name>Internal releases</name>
 			<url>http://dea.hartveld.com/nexus/content/repositories/releases</url>
 		</repository>
