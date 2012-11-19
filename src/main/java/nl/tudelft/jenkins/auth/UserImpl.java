@@ -3,6 +3,9 @@ package nl.tudelft.jenkins.auth;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class UserImpl implements User {
 
 	private final String name;
@@ -29,6 +32,11 @@ public class UserImpl implements User {
 	@Override
 	public String getEmail() {
 		return email;
+	}
+
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }
