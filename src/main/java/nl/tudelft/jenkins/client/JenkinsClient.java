@@ -54,6 +54,6 @@ public interface JenkinsClient extends AutoCloseable {
 	 * this method.
 	 */
 	@Override
-	public void close();
+	void close();
 
 }
