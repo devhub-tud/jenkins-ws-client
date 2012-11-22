@@ -50,6 +50,8 @@ class JenkinsClientImpl implements JenkinsClient {
 		final String url = endpoint + "createItem?name=" + name;
 		final String xml = job.asXml();
 
+		prevalidateConfig(xml);
+
 		LOG.trace("Creating job ...");
 		HttpRestResponse response = client.post(url, "application/xml", xml);
 
@@ -62,6 +64,11 @@ class JenkinsClientImpl implements JenkinsClient {
 			throw new RuntimeException(message);
 		}
 
+	}
+
+	private void prevalidateConfig(final String xml) {
+		HttpRestResponse response = client.post(endpoint + "pluginManager/prevalidateConfig", "application/xml", xml);
+		System.err.println(response.getStatusLine() + ":\n" + response.getContents());
 	}
 
 	@Override

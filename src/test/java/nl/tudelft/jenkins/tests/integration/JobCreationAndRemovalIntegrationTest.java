@@ -12,6 +12,7 @@ import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.jobs.Job;
 
 import org.junit.Test;
+import org.jvnet.hudson.test.recipes.WithPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,8 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 	}
 
 	@Test
-	public void testThatCreationAndDeletionOfJobWorks() {
+	@WithPlugin("git.jpi")
+	public void testThatCreationAndDeletionOfJobWorks() throws Exception {
 
 		LOG.debug("Testing creation, then deletion of job ...");
 
@@ -43,6 +45,7 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 	}
 
 	@Test
+	@WithPlugin("git.jpi")
 	public void testThatRetrievalOfNonExistingJobThrowsException() {
 
 		LOG.debug("Testing deletion of non-existing job ...");

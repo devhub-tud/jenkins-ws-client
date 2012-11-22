@@ -32,9 +32,7 @@ public class JenkinsWsClientGuiceModule extends AbstractModule {
 	private final HttpHost jenkinsHost;
 	private final Credentials credentials;
 
-	private final HttpContext httpContext;
-
-	public JenkinsWsClientGuiceModule(final String hostname, int port, final String username, final String password) {
+	public JenkinsWsClientGuiceModule(final String hostname, int port, final String path, final String username, final String password) {
 
 		LOG.trace("Creating new Jenkins WS Client Guice module for: {}@{}:{} ...", username, hostname, port);
 
@@ -42,17 +40,19 @@ public class JenkinsWsClientGuiceModule extends AbstractModule {
 		checkArgument(!isEmpty(username), "username must be non-empty");
 		checkArgument(!isEmpty(password), "password must be non-empty");
 
-		endpoint = "http://" + hostname + ':' + port + "/";
+		final StringBuilder builder = new StringBuilder("http://");
+		builder.append(hostname);
+		builder.append(':');
+		builder.append(port);
+		if (path == null || !path.isEmpty()) {
+			builder.append('/');
+		} else {
+			builder.append(path);
+		}
 
+		endpoint = builder.toString();
 		credentials = new UsernamePasswordCredentials(username, password);
 		jenkinsHost = new HttpHost(hostname, port);
-
-		AuthCache authCache = new BasicAuthCache();
-		BasicScheme basicAuth = new BasicScheme();
-		authCache.put(jenkinsHost, basicAuth);
-
-		httpContext = new BasicHttpContext();
-		httpContext.setAttribute(ClientContext.AUTH_CACHE, authCache);
 
 	}
 
@@ -74,6 +74,13 @@ public class JenkinsWsClientGuiceModule extends AbstractModule {
 
 	@Provides
 	public HttpContext getHttpContext() {
+		AuthCache authCache = new BasicAuthCache();
+		BasicScheme basicAuth = new BasicScheme();
+		authCache.put(jenkinsHost, basicAuth);
+
+		HttpContext httpContext = new BasicHttpContext();
+		httpContext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+
 		return httpContext;
 	}
 

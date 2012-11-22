@@ -17,6 +17,7 @@ import nl.tudelft.jenkins.jobs.Job;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,25 +26,34 @@ import com.google.inject.Injector;
 
 public abstract class AbstractJenkinsIntegrationTestBase {
 
+	@Rule public ExtendedJenkinsRule rule = new ExtendedJenkinsRule();
+
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractJenkinsIntegrationTestBase.class);
 
-	protected static final String JOB_SCM_URL = "git://xyz";
+	private static final String USER = "x";
+	private static final String PASS = "x";
+
+	protected static final String JOB_SCM_URL = "git://github.com/dlhartveld/mini-project.git";
 
 	private Injector injector;
 
 	private JenkinsClient client;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
 
-		injector = Guice.createInjector(new JenkinsWsClientGuiceModule("192.168.56.101", 8080, "david", "x"));
+		rule.jenkins.setCrumbIssuer(null);
 
+		int port = rule.getLocalPort();
+		String path = "/jenkins";
+
+		injector = Guice.createInjector(new JenkinsWsClientGuiceModule("localhost", port, path, USER, PASS));
 		client = injector.getInstance(JenkinsClient.class);
 
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 
 		LOG.trace("Cleaning up job ...");
 

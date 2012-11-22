@@ -11,6 +11,8 @@
 	<properties>
 		<version.java>1.7</version.java>
 
+		<version.jenkins>1.491</version.jenkins>
+
 		<version.slf4j-api>1.7.2</version.slf4j-api>
 		<version.logback-classic>1.0.7</version.logback-classic>
 		<version.apache.commons.lang>2.6</version.apache.commons.lang>
@@ -102,12 +104,6 @@
 			<artifactId>guice</artifactId>
 			<version>${version.google.guice}</version>
 		</dependency>
-		
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-servlet</artifactId>
-			<version>${version.google.guice}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.jdom</groupId>
@@ -145,6 +141,19 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${version.mockito}</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jenkins-ci.main</groupId>
+			<artifactId>jenkins-test-harness</artifactId>
+			<version>${version.jenkins}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -226,6 +235,21 @@
 		</plugins>
 
 	</build>
+
+	<repositories>
+
+		<repository>
+			<id>jenkins-releases</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+	</repositories>
 
 	<distributionManagement>
 
