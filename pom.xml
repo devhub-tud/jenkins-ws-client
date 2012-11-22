@@ -11,8 +11,6 @@
 	<properties>
 		<version.java>1.7</version.java>
 
-		<version.jenkins>1.491</version.jenkins>
-
 		<version.slf4j-api>1.7.2</version.slf4j-api>
 		<version.logback-classic>1.0.7</version.logback-classic>
 		<version.apache.commons.lang>2.6</version.apache.commons.lang>
@@ -142,13 +140,6 @@
 					<artifactId>hamcrest-core</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jenkins-ci.main</groupId>
-			<artifactId>jenkins-test-harness</artifactId>
-			<version>${version.jenkins}</version>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

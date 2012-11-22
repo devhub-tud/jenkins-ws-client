@@ -17,7 +17,6 @@ import nl.tudelft.jenkins.jobs.Job;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +25,13 @@ import com.google.inject.Injector;
 
 public abstract class AbstractJenkinsIntegrationTestBase {
 
-	@Rule public ExtendedJenkinsRule rule = new ExtendedJenkinsRule();
+	private static final String JENKINS_HOST = "192.168.56.101";
+	private static final int JENKINS_PORT = 8080;
+	private static final String JENKINS_CONTEXT = "/jenkins";
+	private static final String JENKINS_USER = "david";
+	private static final String JENKINS_PASS = "x";
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractJenkinsIntegrationTestBase.class);
-
-	private static final String USER = "x";
-	private static final String PASS = "x";
 
 	protected static final String JOB_SCM_URL = "git://github.com/dlhartveld/mini-project.git";
 
@@ -42,12 +42,7 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	@Before
 	public void setUp() throws Exception {
 
-		rule.jenkins.setCrumbIssuer(null);
-
-		int port = rule.getLocalPort();
-		String path = "/jenkins";
-
-		injector = Guice.createInjector(new JenkinsWsClientGuiceModule("localhost", port, path, USER, PASS));
+		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(JENKINS_HOST, JENKINS_PORT, JENKINS_CONTEXT, JENKINS_USER, JENKINS_PASS));
 		client = injector.getInstance(JenkinsClient.class);
 
 	}

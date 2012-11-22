@@ -20,7 +20,7 @@ public class JobPermissionTest {
 
 		String xml = JobAuthMatrixPermission.JOB_WORKSPACE.asXmlforUser(user);
 
-		assertThat(xml, is(equalTo("<permission>hudson.model.Item.Workspace:name</permission>")));
+		assertThat(xml, is(equalTo("<permission>hudson.model.Item.Workspace:" + name + "</permission>")));
 
 	}
 

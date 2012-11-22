@@ -1,6 +1,7 @@
 package nl.tudelft.jenkins.tests.integration;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -25,19 +26,17 @@ public class JobUpdateIntegrationTest extends AbstractJenkinsIntegrationTestBase
 
 		List<User> users = newArrayList();
 
-		Job job = createJob(JOB_SCM_URL, users);
-		job.addUser(user);
+		Job createdJob = createJob(JOB_SCM_URL, users);
 
-		updateJob(job);
+		assertThat(createdJob.getUsers(), is(empty()));
 
-		job = retrieveJob();
+		createdJob.addUser(user);
+		updateJob(createdJob);
 
-		users = job.getUsers();
+		Job retrievedJob = retrieveJob();
 
-		assertThat(users, hasSize(1));
-		User storedUser = users.get(0);
-		assertThat(storedUser.getName(), is(equalTo(user.getName())));
-		assertThat(storedUser.getEmail(), is(equalTo(user.getEmail())));
+		assertThat(retrievedJob.getUsers(), hasSize(1));
+		assertThat(retrievedJob.getUsers().get(0).getName(), is(equalTo(user.getName())));
 
 	}
 
