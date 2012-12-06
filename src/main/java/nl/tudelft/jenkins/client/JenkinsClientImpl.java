@@ -12,7 +12,7 @@ import javax.inject.Named;
 
 import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.auth.UserImpl;
-import nl.tudelft.jenkins.client.exceptions.JenkinsRestException;
+import nl.tudelft.jenkins.client.exceptions.JenkinsException;
 import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.client.exceptions.NoSuchUserException;
 import nl.tudelft.jenkins.jobs.Job;
@@ -66,7 +66,7 @@ class JenkinsClientImpl implements JenkinsClient {
 		} else {
 			String message = "Error occurred while attempting to create job: " + response.getStatusLine();
 			LOG.error(message);
-			throw new RuntimeException(message);
+			throw new JenkinsException(message);
 		}
 
 	}
@@ -93,7 +93,7 @@ class JenkinsClientImpl implements JenkinsClient {
 			response.consume();
 			String message = "Error while attempting to retrieve job config.xml: " + response.getStatusLine();
 			LOG.error(message);
-			throw new RuntimeException(message);
+			throw new JenkinsException(message);
 		}
 
 	}
@@ -115,7 +115,7 @@ class JenkinsClientImpl implements JenkinsClient {
 		if (!response.isOk()) {
 			String message = "Failed to update job config.xml: " + response.getStatusLine();
 			LOG.error(message);
-			throw new RuntimeException(message);
+			throw new JenkinsException(message);
 		}
 
 	}
@@ -134,7 +134,7 @@ class JenkinsClientImpl implements JenkinsClient {
 		if (!response.isFound()) {
 			String message = "Failed to delete job: " + response.getStatusLine();
 			LOG.error(message);
-			throw new RuntimeException(message);
+			throw new JenkinsException(message);
 		}
 
 	}
@@ -166,7 +166,7 @@ class JenkinsClientImpl implements JenkinsClient {
 			return retrieveUser(userName);
 		} else {
 			LOG.error("Failed to create user: {}", response.getStatusLine());
-			throw new JenkinsRestException(response);
+			throw new JenkinsException("Failed to create user: " + response.getStatusLine());
 		}
 	}
 
@@ -182,7 +182,7 @@ class JenkinsClientImpl implements JenkinsClient {
 			return UserImpl.fromXml(response.getContents());
 		} else {
 			LOG.warn("Failed to retrieve user: {}", response.getStatusLine());
-			throw new JenkinsRestException(response);
+			throw new JenkinsException("Failed to retrieve user: " + response.getStatusLine());
 		}
 	}
 
@@ -201,7 +201,7 @@ class JenkinsClientImpl implements JenkinsClient {
 
 		if (!response.isFound()) {
 			LOG.trace("Failed to delete user: {}", response.getStatusLine());
-			throw new JenkinsRestException(response);
+			throw new JenkinsException("Failed to delete user: " + response.getStatusLine());
 		}
 	}
 
