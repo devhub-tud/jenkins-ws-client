@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import nl.tudelft.jenkins.client.exceptions.NoSuchUserException;
 import nl.tudelft.jenkins.tests.integration.AbstractJenkinsIntegrationTestBase;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class UserManagementIntegrationTest extends AbstractJenkinsIntegrationTestBase {
@@ -15,7 +16,7 @@ public class UserManagementIntegrationTest extends AbstractJenkinsIntegrationTes
 	private static final String FULLNAME = "Mister X";
 
 	@Test
-	// @Ignore("Deleting a user only removes it from the security realm - it still exists in the people list")
+	@Ignore("Deleting a user only removes it from the security realm - it still exists in the people list")
 	public void testThatUserCanBeCreatedAndRemoved() throws Exception {
 		User user = createUser(USER, PASSWORD, EMAIL, FULLNAME);
 
