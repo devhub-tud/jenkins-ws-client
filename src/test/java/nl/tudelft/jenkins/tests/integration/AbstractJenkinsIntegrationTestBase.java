@@ -140,7 +140,7 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	}
 
 	private static String jenkinsPassword() {
-		return readResource("/test.resource");
+		return readResource("/test.password");
 	}
 
 	private static String readResource(String resource) {
