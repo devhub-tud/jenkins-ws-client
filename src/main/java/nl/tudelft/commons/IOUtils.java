@@ -46,4 +46,6 @@ public class IOUtils {
 
 	}
 
+	private IOUtils() {}
+
 }

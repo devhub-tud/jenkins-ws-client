@@ -59,4 +59,6 @@ public class XmlUtils {
 		}
 	}
 
+	private XmlUtils() {}
+
 }

@@ -22,4 +22,6 @@ class JobDocumentProvider {
 		return XmlUtils.createJobDocumentFrom(is);
 	}
 
+	private JobDocumentProvider() {}
+
 }

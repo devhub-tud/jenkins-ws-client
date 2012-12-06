@@ -9,4 +9,6 @@ class JobPermissionMatrixFactory {
 		throw new NotImplementedException();
 	}
 
+	private JobPermissionMatrixFactory() {}
+
 }
