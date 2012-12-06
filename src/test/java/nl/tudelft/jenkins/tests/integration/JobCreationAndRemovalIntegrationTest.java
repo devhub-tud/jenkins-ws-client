@@ -19,8 +19,6 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 
 	private static final Logger LOG = LoggerFactory.getLogger(JobCreationAndRemovalIntegrationTest.class);
 
-	private static final String JOB_SCM_URL = "git://xyz";
-
 	private static final User USER0 = new UserImpl("person", "person@example.com");
 	private static final User USER1 = new UserImpl("other", "other@example.com");
 
@@ -32,7 +30,7 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 	}
 
 	@Test
-	public void testThatCreationAndDeletionOfJobWorks() {
+	public void testThatCreationAndDeletionOfJobWorks() throws Exception {
 
 		LOG.debug("Testing creation, then deletion of job ...");
 

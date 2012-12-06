@@ -5,7 +5,7 @@ package nl.tudelft.jenkins.client.exceptions;
  * which does not exist.
  */
 @SuppressWarnings("serial")
-public class NoSuchJobException extends JenkinsClientException {
+public class NoSuchJobException extends JenkinsException {
 
 	public NoSuchJobException(final String jobName) {
 		super("No such job: " + jobName);
