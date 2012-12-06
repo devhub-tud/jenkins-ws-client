@@ -40,6 +40,7 @@ public class IOUtils {
 			final String line = br.readLine();
 			sb.append(line);
 		}
+		br.close();
 
 		return sb.toString();
 
