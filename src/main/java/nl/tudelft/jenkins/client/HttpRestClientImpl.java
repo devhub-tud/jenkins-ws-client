@@ -112,11 +112,4 @@ class HttpRestClientImpl implements HttpRestClient {
 
 	}
 
-	@SuppressWarnings("serial")
-	private static class HttpRestClientException extends RuntimeException {
-		public HttpRestClientException(String message, Throwable cause) {
-			super(message, cause);
-		}
-	}
-
 }

@@ -67,11 +67,11 @@ class HttpRestResponseImpl implements HttpRestResponse {
 		} catch (ParseException e) {
 			String message = "Header elements of POST response could not be parsed";
 			LOG.error(message, e);
-			throw new RuntimeException(message, e);
+			throw new HttpRestClientException(message, e);
 		} catch (IOException e) {
 			String message = "Error occurred while reading network stream";
 			LOG.error(message, e);
-			throw new RuntimeException(message, e);
+			throw new HttpRestClientException(message, e);
 		} finally {
 			EntityUtils.consumeQuietly(entity);
 		}
