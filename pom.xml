@@ -51,12 +51,14 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${version.slf4j-api}</version>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${version.logback-classic}</version>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
