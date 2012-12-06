@@ -4,16 +4,23 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import nl.tudelft.jenkins.auth.User;
+import nl.tudelft.jenkins.auth.UserImpl;
+import nl.tudelft.jenkins.client.exceptions.JenkinsRestException;
 import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
+import nl.tudelft.jenkins.client.exceptions.NoSuchUserException;
 import nl.tudelft.jenkins.jobs.Job;
 import nl.tudelft.jenkins.jobs.JobImpl;
 
+import org.apache.commons.lang.NotImplementedException;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,17 +139,75 @@ class JenkinsClientImpl implements JenkinsClient {
 
 	}
 
-	@Override
-	public void close() {
-		client.close();
-	}
-
 	private String urlForJob(final String name) {
 		return endpoint + "job/" + name + "/config.xml";
 	}
 
 	private String urlForJob(Job job) {
 		return urlForJob(job.getName());
+	}
+
+	@Override
+	public User createUser(String userName, String password, String email, String fullName) {
+		LOG.trace("Creating user: {} - {} - {}", userName, email, fullName);
+
+		String url = endpoint + "securityRealm/createAccountByAdmin";
+
+		List<NameValuePair> params = new ArrayList<>();
+		params.add(new BasicNameValuePair("username", userName));
+		params.add(new BasicNameValuePair("password1", password));
+		params.add(new BasicNameValuePair("password2", password));
+		params.add(new BasicNameValuePair("fullname", fullName));
+		params.add(new BasicNameValuePair("email", email));
+
+		HttpRestResponse response = client.postForm(url, params);
+
+		if (response.isFound()) {
+			return retrieveUser(userName);
+		} else {
+			LOG.error("Failed to create user: {}", response.getStatusLine());
+			throw new JenkinsRestException(response);
+		}
+	}
+
+	@Override
+	public User retrieveUser(String userName) throws NoSuchUserException {
+		LOG.trace("Retrieving user data: {}", userName);
+
+		String url = endpoint + "user/" + userName + "/api/xml";
+
+		HttpRestResponse response = client.get(url);
+
+		if (response.isOk()) {
+			return UserImpl.fromXml(response.getContents());
+		} else {
+			LOG.warn("Failed to retrieve user: {}", response.getStatusLine());
+			throw new JenkinsRestException(response);
+		}
+	}
+
+	@Override
+	public User updateUser(User user) throws NoSuchUserException {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public void deleteUser(User user) throws NoSuchUserException {
+		LOG.trace("Deleting user: {}", user);
+
+		String url = endpoint + "user/" + user.getName() + "/doDelete";
+
+		HttpRestResponse response = client.postForm(url, new ArrayList<NameValuePair>());
+
+		if (!response.isFound()) {
+			LOG.trace("Failed to delete user: {}", response.getStatusLine());
+			throw new JenkinsRestException(response);
+		}
+	}
+
+	@Override
+	public void close() {
+		client.close();
 	}
 
 }

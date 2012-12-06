@@ -2,11 +2,13 @@ package nl.tudelft.jenkins.jobs;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static nl.tudelft.commons.XmlUtils.findSingleElementInDocumentByXPath;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.InputStream;
 import java.util.List;
 
+import nl.tudelft.commons.XmlUtils;
 import nl.tudelft.jenkins.auth.User;
 
 import org.apache.commons.io.IOUtils;
@@ -17,10 +19,7 @@ import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
-import org.jdom2.filter.Filters;
 import org.jdom2.output.XMLOutputter;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,7 @@ public class JobImpl implements Job {
 		this.name = name;
 		this.document = checkNotNull(document, "document must be non-null");
 
-		final Element element = findSingleElementInDocumentByXPath(XPATH_PROPERTIES_SECURITY);
+		final Element element = findSingleElementInDocumentByXPath(document, XPATH_PROPERTIES_SECURITY);
 		permissionMatrix = JobPermissionMatrixImpl.fromElement(element);
 
 	}
@@ -63,7 +62,7 @@ public class JobImpl implements Job {
 
 		checkArgument(isNotEmpty(scmUrl), "scmUrl must be non-empty");
 
-		final Element url = findSingleElementInDocumentByXPath(XPATH_SCM_GIT_URL);
+		final Element url = findSingleElementInDocumentByXPath(document, XPATH_SCM_GIT_URL);
 
 		url.setContent(new Text(scmUrl));
 
@@ -104,7 +103,7 @@ public class JobImpl implements Job {
 
 		checkNotNull(recipient, "recipient must be non-null");
 
-		final Element recipients = findSingleElementInDocumentByXPath(XPATH_NOTIFICATION_RECIPIENTS);
+		final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
 
 		recipients.setContent(new Text(recipient.getEmail()));
 
@@ -115,7 +114,7 @@ public class JobImpl implements Job {
 
 		checkNotNull(recipient, "recipient must be non-null");
 
-		final Element recipients = findSingleElementInDocumentByXPath(XPATH_NOTIFICATION_RECIPIENTS);
+		final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
 
 		final int contentSize = recipients.getContentSize();
 		if (contentSize == 0) {
@@ -162,23 +161,9 @@ public class JobImpl implements Job {
 
 		final InputStream is = IOUtils.toInputStream(xml);
 
-		final Document document = JobDocumentProvider.createJobDocumentFrom(is);
+		final Document document = XmlUtils.createJobDocumentFrom(is);
 
 		return new JobImpl(name, document);
-
-	}
-
-	private Element findSingleElementInDocumentByXPath(final String xPath) {
-
-		final XPathFactory xPathFactory = XPathFactory.instance();
-		final XPathExpression<Element> xPathExpression = xPathFactory.compile(xPath, Filters.element());
-		final Element element = xPathExpression.evaluateFirst(document);
-
-		if (element == null) {
-			throw new RuntimeException("Document does not contain element on path: " + xPath);
-		}
-
-		return element;
 
 	}
 

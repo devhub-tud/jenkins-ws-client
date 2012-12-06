@@ -1,0 +1,14 @@
+<user>
+	<absoluteUrl>http://192.168.56.101:8080/user/mrx</absoluteUrl>
+	<fullName>Mister X</fullName>
+	<id>mrx</id>
+	<property />
+	<property />
+	<property>
+		<insensitiveSearch>false</insensitiveSearch>
+	</property>
+	<property />
+	<property>
+		<address>mrx@example.com</address>
+	</property>
+</user>

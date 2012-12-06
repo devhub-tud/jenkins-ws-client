@@ -34,7 +34,7 @@ public class JenkinsWsClientGuiceModule extends AbstractModule {
 
 	public JenkinsWsClientGuiceModule(final String hostname, int port, final String path, final String username, final String password) {
 
-		LOG.trace("Creating new Jenkins WS Client Guice module for: {}@{}:{} ...", username, hostname, port);
+		LOG.trace("Creating new Jenkins WS Client Guice module for: {}@{}:{}{} ...", username, hostname, port, path);
 
 		checkArgument(!isEmpty(hostname), "endpoint must be non-empty");
 		checkArgument(!isEmpty(username), "username must be non-empty");
@@ -44,10 +44,13 @@ public class JenkinsWsClientGuiceModule extends AbstractModule {
 		builder.append(hostname);
 		builder.append(':');
 		builder.append(port);
-		if (path == null || !path.isEmpty()) {
+		if (path == null || path.isEmpty()) {
 			builder.append('/');
 		} else {
 			builder.append(path);
+			if (!path.endsWith("/")) {
+				builder.append('/');
+			}
 		}
 
 		endpoint = builder.toString();

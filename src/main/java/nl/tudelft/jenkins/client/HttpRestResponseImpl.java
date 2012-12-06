@@ -17,9 +17,11 @@ class HttpRestResponseImpl implements HttpRestResponse {
 	private static final Logger LOG = LoggerFactory.getLogger(HttpRestResponseImpl.class);
 
 	private final HttpResponse response;
+	private final String contents;
 
 	HttpRestResponseImpl(HttpResponse response) {
 		this.response = checkNotNull(response);
+		contents = contentsOf(response.getEntity());
 	}
 
 	@Override
@@ -49,10 +51,6 @@ class HttpRestResponseImpl implements HttpRestResponse {
 
 	@Override
 	public String getContents() {
-		HttpEntity entity = response.getEntity();
-
-		String contents = contentsOf(entity);
-
 		return contents;
 	}
 

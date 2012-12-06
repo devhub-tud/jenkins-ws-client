@@ -25,8 +25,8 @@ import com.google.inject.Injector;
 
 public abstract class AbstractJenkinsIntegrationTestBase {
 
-	private static final String JENKINS_HOST = "192.168.56.101";
-	private static final int JENKINS_PORT = 8080;
+	private static final String JENKINS_HOST = "dea.hartveld.com";
+	private static final int JENKINS_PORT = 80;
 	private static final String JENKINS_CONTEXT = "/jenkins";
 	private static final String JENKINS_USER = "david";
 	private static final String JENKINS_PASS = "x";
@@ -111,6 +111,26 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 
 	private void assertThatJobNameIsCorrectForCurrentTest(final Job job) {
 		assertThat("Job name must be set to a test-specific value", job.getName(), is(equalTo(getJobName())));
+	}
+
+	protected User createUser(String userName, String password, String email, String fullName) {
+
+		LOG.trace("Creating user: {} - {} - {}", userName, email, fullName);
+
+		return client.createUser(userName, password, email, fullName);
+
+	}
+
+	protected void deleteUser(User user) {
+		LOG.trace("Deleting user: {}", user);
+
+		client.deleteUser(user);
+	}
+
+	protected User retrieveUser(String userName) {
+		LOG.trace("Retrieving user: {}", userName);
+
+		return client.retrieveUser(userName);
 	}
 
 }

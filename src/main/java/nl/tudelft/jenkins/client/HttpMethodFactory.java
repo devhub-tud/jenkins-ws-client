@@ -1,11 +1,15 @@
 package nl.tudelft.jenkins.client;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +22,20 @@ class HttpMethodFactory {
 
 	@Inject
 	HttpMethodFactory() {}
+
+	HttpPost createFormPost(String url, List<NameValuePair> params) {
+		LOG.trace("Creating FORM POST: {}", url);
+
+		StringEntity entity = createStringEntityForContents(ContentType.APPLICATION_FORM_URLENCODED.getMimeType(), "");
+
+		String encoding = ContentType.APPLICATION_FORM_URLENCODED.getCharset().name();
+		String completeUrl = url + '?' + URLEncodedUtils.format(params, encoding);
+
+		HttpPost post = new HttpPost(completeUrl);
+		post.setEntity(entity);
+
+		return post;
+	}
 
 	HttpPost createPost(String url, String contentType, String contents) {
 		LOG.trace("Creating POST: {} - {}", url, contentType);

@@ -3,9 +3,11 @@ package nl.tudelft.jenkins.client;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -41,6 +43,15 @@ class HttpRestClientImpl implements HttpRestClient {
 
 		return execute(post);
 
+	}
+
+	@Override
+	public HttpRestResponse postForm(String url, List<NameValuePair> params) {
+		LOG.trace("POST FORM: {} - {}", url, params);
+
+		HttpPost post = methodFactory.createFormPost(url, params);
+
+		return execute(post);
 	}
 
 	@Override
