@@ -8,11 +8,15 @@
 	<version>0.0.3-SNAPSHOT</version>
 	<name>Java wrapper for the Jenkins web service API</name>
 
+	<prerequisites>
+		<maven>3.0.4</maven>
+	</prerequisites>
+
 	<properties>
 		<version.java>1.7</version.java>
 
 		<version.slf4j-api>1.7.2</version.slf4j-api>
-		<version.logback-classic>1.0.7</version.logback-classic>
+		<version.logback-classic>1.0.9</version.logback-classic>
 		<version.apache.commons.lang>2.6</version.apache.commons.lang>
 		<version.apache.commons.lang3>3.1</version.apache.commons.lang3>
 		<version.apache.commons.io>2.4</version.apache.commons.io>
