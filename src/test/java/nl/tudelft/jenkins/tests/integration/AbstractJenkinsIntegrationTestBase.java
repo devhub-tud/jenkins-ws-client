@@ -6,8 +6,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
 import java.util.List;
 
+import nl.tudelft.commons.IOUtils;
 import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.client.JenkinsClient;
 import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
@@ -28,8 +30,8 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	private static final String JENKINS_HOST = "dea.hartveld.com";
 	private static final int JENKINS_PORT = 80;
 	private static final String JENKINS_CONTEXT = "/jenkins";
-	private static final String JENKINS_USER = "david";
-	private static final String JENKINS_PASS = "x";
+	private static final String JENKINS_USER = jenkinsUser();
+	private static final String JENKINS_PASS = jenkinsPassword();
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractJenkinsIntegrationTestBase.class);
 
@@ -131,6 +133,22 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 		LOG.trace("Retrieving user: {}", userName);
 
 		return client.retrieveUser(userName);
+	}
+
+	private static String jenkinsUser() {
+		return readResource("/test.username");
+	}
+
+	private static String jenkinsPassword() {
+		return readResource("/test.resource");
+	}
+
+	private static String readResource(String resource) {
+		try {
+			return IOUtils.readResource(resource);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to read resource: " + resource, e);
+		}
 	}
 
 }
