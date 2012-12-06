@@ -13,18 +13,19 @@
 
 		<version.slf4j-api>1.7.2</version.slf4j-api>
 		<version.logback-classic>1.0.7</version.logback-classic>
+		<version.apache.commons.lang>2.6</version.apache.commons.lang>
 		<version.apache.commons.lang3>3.1</version.apache.commons.lang3>
 		<version.apache.commons.io>2.4</version.apache.commons.io>
 		<version.apache.httpclient>4.2.2</version.apache.httpclient>
 		<version.google.guava>13.0.1</version.google.guava>
 		<version.google.gson>2.2.2</version.google.gson>
 		<version.google.guice>3.0</version.google.guice>
-		<version.jclouds>1.5.3</version.jclouds>
 		<version.jdom>2.0.2</version.jdom>
 		<version.jaxen>1.1.4</version.jaxen>
 
 		<version.hamcrest>1.3</version.hamcrest>
 		<version.junit>4.11</version.junit>
+		<version.mockito>1.9.5</version.mockito>
 
 		<version.plugin.compiler>2.5.1</version.plugin.compiler>
 		<version.plugin.jar>2.4</version.plugin.jar>
@@ -52,6 +53,12 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${version.logback-classic}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>${version.apache.commons.lang}</version>
 		</dependency>
 
 		<dependency>
@@ -97,12 +104,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jclouds.labs</groupId>
-			<artifactId>jenkins</artifactId>
-			<version>${version.jclouds}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>${version.jdom}</version>
@@ -125,6 +126,13 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${version.junit}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${version.mockito}</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -212,6 +220,21 @@
 		</plugins>
 
 	</build>
+
+	<repositories>
+
+		<repository>
+			<id>jenkins-releases</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+	</repositories>
 
 	<distributionManagement>
 
