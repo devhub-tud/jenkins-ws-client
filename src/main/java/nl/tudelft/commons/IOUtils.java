@@ -33,14 +33,14 @@ public class IOUtils {
 
 		final InputStream is = IOUtils.class.getResourceAsStream(name);
 		final InputStreamReader isr = new InputStreamReader(is);
-		final BufferedReader br = new BufferedReader(isr);
 
 		final StringBuilder sb = new StringBuilder();
-		while (br.ready()) {
-			final String line = br.readLine();
-			sb.append(line);
+		try (final BufferedReader br = new BufferedReader(isr)) {
+			while (br.ready()) {
+				final String line = br.readLine();
+				sb.append(line);
+			}
 		}
-		br.close();
 
 		return sb.toString();
 
