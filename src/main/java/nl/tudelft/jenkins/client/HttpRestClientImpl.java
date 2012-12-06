@@ -103,13 +103,20 @@ class HttpRestClientImpl implements HttpRestClient {
 		} catch (ClientProtocolException e) {
 			LOG.error("HTTP protocol error", e);
 			request.abort();
-			throw new RuntimeException("HTTP protocol error", e);
+			throw new HttpRestClientException("HTTP protocol error", e);
 		} catch (IOException e) {
 			LOG.error("Error or connection abort", e);
 			request.abort();
-			throw new RuntimeException("Error or connection abort", e);
+			throw new HttpRestClientException("Error or connection abort", e);
 		}
 
+	}
+
+	@SuppressWarnings("serial")
+	private static class HttpRestClientException extends RuntimeException {
+		public HttpRestClientException(String message, Throwable cause) {
+			super(message, cause);
+		}
 	}
 
 }
