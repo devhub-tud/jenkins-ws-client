@@ -32,6 +32,10 @@ public class IOUtils {
 		checkNotNull(name, "name must not be null");
 
 		final InputStream is = IOUtils.class.getResourceAsStream(name);
+		if (is == null) {
+			throw new IOException("Resource does not exist: " + name);
+		}
+
 		final InputStreamReader isr = new InputStreamReader(is);
 
 		final StringBuilder sb = new StringBuilder();
