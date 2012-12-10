@@ -31,7 +31,7 @@
 		<version.junit>4.11</version.junit>
 		<version.mockito>1.9.5</version.mockito>
 
-		<version.plugin.compiler>2.5.1</version.plugin.compiler>
+		<version.plugin.compiler>3.0</version.plugin.compiler>
 		<version.plugin.jar>2.4</version.plugin.jar>
 		<version.plugin.source>2.2.1</version.plugin.source>
 		<version.plugin.javadoc>2.9</version.plugin.javadoc>
@@ -226,21 +226,6 @@
 		</plugins>
 
 	</build>
-
-	<repositories>
-
-		<repository>
-			<id>jenkins-releases</id>
-			<url>http://repo.jenkins-ci.org/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-
-	</repositories>
 
 	<distributionManagement>
 
