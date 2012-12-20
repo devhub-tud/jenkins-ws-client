@@ -5,7 +5,7 @@
 
 	<groupId>nl.tudelft</groupId>
 	<artifactId>jenkins-ws-client</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<name>Java wrapper for the Jenkins web service API</name>
 
 	<prerequisites>
