@@ -16,6 +16,13 @@ import com.google.inject.ImplementedBy;
 public interface JenkinsClient extends AutoCloseable {
 
 	/**
+	 * Get a string representation of URL the Jenkins server root endpoint.
+	 * 
+	 * @return A {@link String} representing the URL of the Jenkins server.
+	 */
+	String getJenkinsEndpoint();
+
+	/**
 	 * Create a new build job with the given parameters.
 	 * 
 	 * @param name Job name.

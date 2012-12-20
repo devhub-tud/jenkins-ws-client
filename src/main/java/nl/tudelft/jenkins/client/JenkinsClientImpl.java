@@ -44,6 +44,11 @@ class JenkinsClientImpl implements JenkinsClient {
 	}
 
 	@Override
+	public String getJenkinsEndpoint() {
+		return endpoint;
+	}
+
+	@Override
 	public Job createJob(final String name, final String scmUrl, final List<User> users) {
 
 		LOG.trace("Creating job {} @ {} ...", name, scmUrl);
