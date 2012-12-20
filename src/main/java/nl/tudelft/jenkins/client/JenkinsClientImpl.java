@@ -2,6 +2,7 @@ package nl.tudelft.jenkins.client;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static nl.tudelft.jenkins.client.JenkinsVersion.SUPPORTED_JENKINS_VERSION;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import javax.inject.Named;
 import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.auth.UserImpl;
 import nl.tudelft.jenkins.client.exceptions.JenkinsException;
+import nl.tudelft.jenkins.client.exceptions.NoJenkinsServerException;
 import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.client.exceptions.NoSuchUserException;
 import nl.tudelft.jenkins.jobs.Job;
@@ -26,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 class JenkinsClientImpl implements JenkinsClient {
 
+	private static final String JENKINS_VERSION_HEADER_NAME = "X-Jenkins";
+
 	private static final Logger LOG = LoggerFactory.getLogger(JenkinsClientImpl.class);
 
 	private final String endpoint;
@@ -34,13 +38,32 @@ class JenkinsClientImpl implements JenkinsClient {
 	@Inject
 	JenkinsClientImpl(HttpRestClient client, @Named("JenkinsEndpoint") String endpoint) {
 
-		LOG.trace("Initializing Jenkins client ...");
+		LOG.trace("Initializing Jenkins client for endpoint: {}", endpoint);
 
 		checkArgument(isNotEmpty(endpoint), "endpoint must be non-empty");
 
 		this.endpoint = endpoint;
 		this.client = checkNotNull(client, "client");
 
+		validateServerOnEndpoint();
+	}
+
+	private void validateServerOnEndpoint() {
+		String url = endpoint + "/login";
+
+		LOG.trace("Validating Jenkins server on endpoint: {}", url);
+		HttpRestResponse response = client.get(url);
+
+		if (response.isOk() && response.hasHeader(JENKINS_VERSION_HEADER_NAME)) {
+			HttpRestResponse.Header header = response.getHeader(JENKINS_VERSION_HEADER_NAME);
+			if (SUPPORTED_JENKINS_VERSION.equals(header.getValue())) {
+				LOG.trace("Jenkins server validated on endpoint: {}", endpoint);
+				return;
+			}
+		}
+
+		LOG.error("No Jenkins server found on endpoint: {}", url);
+		throw new NoJenkinsServerException(url);
 	}
 
 	@Override

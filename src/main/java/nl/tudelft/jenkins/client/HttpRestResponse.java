@@ -12,8 +12,20 @@ public interface HttpRestResponse {
 
 	String getStatusLine();
 
+	boolean hasHeader(String name);
+
+	Header getHeader(String name);
+
 	String getContents();
 
 	void consume();
+
+	static interface Header {
+
+		String getName();
+
+		String getValue();
+
+	}
 
 }

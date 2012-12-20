@@ -27,11 +27,11 @@ import com.google.inject.Injector;
 
 public abstract class AbstractJenkinsIntegrationTestBase {
 
-	private static final String JENKINS_HOST = "dea.hartveld.com";
-	private static final int JENKINS_PORT = 80;
-	private static final String JENKINS_CONTEXT = "/jenkins";
-	private static final String JENKINS_USER = jenkinsUser();
-	private static final String JENKINS_PASS = jenkinsPassword();
+	private static final String DEFAULT_JENKINS_HOST = "dea.hartveld.com";
+	private static final int DEFAULT_JENKINS_PORT = 80;
+	private static final String DEFEAULT_JENKINS_CONTEXT = "/jenkins";
+	private static final String DEFAULT_JENKINS_USER = jenkinsUser();
+	private static final String DEFAULT_JENKINS_PASS = jenkinsPassword();
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractJenkinsIntegrationTestBase.class);
 
@@ -44,7 +44,11 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	@Before
 	public void setUp() throws Exception {
 
-		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(JENKINS_HOST, JENKINS_PORT, JENKINS_CONTEXT, JENKINS_USER, JENKINS_PASS));
+		String host = getEndpoint().host;
+		int port = getEndpoint().port;
+		String context = getEndpoint().context;
+
+		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(host, port, context, DEFAULT_JENKINS_USER, DEFAULT_JENKINS_PASS));
 		client = injector.getInstance(JenkinsClient.class);
 
 	}
@@ -64,6 +68,28 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 
 		client.close();
 
+	}
+
+	protected JenkinsServiceEndpoint getEndpoint() {
+		return new DefaultJenkinsServiceEndpoint();
+	}
+
+	protected static class JenkinsServiceEndpoint {
+		public final String host;
+		public final int port;
+		public final String context;
+
+		public JenkinsServiceEndpoint(String host, int port, String context) {
+			this.host = host;
+			this.port = port;
+			this.context = context;
+		}
+	}
+
+	private static class DefaultJenkinsServiceEndpoint extends JenkinsServiceEndpoint {
+		public DefaultJenkinsServiceEndpoint() {
+			super(DEFAULT_JENKINS_HOST, DEFAULT_JENKINS_PORT, DEFEAULT_JENKINS_CONTEXT);
+		}
 	}
 
 	public final String getJobName() {

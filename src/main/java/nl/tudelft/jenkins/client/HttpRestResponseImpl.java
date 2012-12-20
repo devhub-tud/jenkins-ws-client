@@ -1,6 +1,8 @@
 package nl.tudelft.jenkins.client;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.IOException;
 
@@ -21,6 +23,9 @@ class HttpRestResponseImpl implements HttpRestResponse {
 
 	HttpRestResponseImpl(HttpResponse response) {
 		this.response = checkNotNull(response);
+
+		LOG.trace("Creating response object. Status: {}", response.getStatusLine());
+
 		contents = contentsOf(response.getEntity());
 	}
 
@@ -47,6 +52,28 @@ class HttpRestResponseImpl implements HttpRestResponse {
 	@Override
 	public String getStatusLine() {
 		return response.getStatusLine().toString();
+	}
+
+	@Override
+	public boolean hasHeader(String name) {
+		checkArgument(isNotEmpty(name), "name must be non-empty");
+
+		return response.getHeaders(name).length > 0;
+	}
+
+	@Override
+	public Header getHeader(String name) {
+		checkArgument(isNotEmpty(name), "name must be non-empty");
+
+		org.apache.http.Header[] headers = response.getHeaders(name);
+		StringBuilder value = new StringBuilder();
+		for (org.apache.http.Header header : headers) {
+			value.append(header.getValue());
+			value.append(",");
+		}
+		value.deleteCharAt(value.length() - 1);
+
+		return new HttpRestResponseHeaderImpl(name, value.toString());
 	}
 
 	@Override
@@ -77,6 +104,28 @@ class HttpRestResponseImpl implements HttpRestResponse {
 		}
 
 		return contents;
+	}
+
+	private class HttpRestResponseHeaderImpl implements Header {
+
+		private String name;
+		private String value;
+
+		private HttpRestResponseHeaderImpl(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getValue() {
+			return value;
+		}
+
 	}
 
 }
