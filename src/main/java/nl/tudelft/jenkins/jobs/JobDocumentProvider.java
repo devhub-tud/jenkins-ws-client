@@ -2,7 +2,6 @@ package nl.tudelft.jenkins.jobs;
 
 import java.io.InputStream;
 
-import nl.tudelft.commons.IOUtils;
 import nl.tudelft.commons.XmlUtils;
 
 import org.jdom2.Document;
@@ -18,7 +17,7 @@ class JobDocumentProvider {
 	public static Document createDefaultJobDocument() {
 		LOG.trace("Creating default job document ...");
 
-		final InputStream is = IOUtils.class.getResourceAsStream(DEFAULT_JOB_FILE_NAME);
+		final InputStream is = JobDocumentProvider.class.getResourceAsStream(DEFAULT_JOB_FILE_NAME);
 		return XmlUtils.createJobDocumentFrom(is);
 	}
 

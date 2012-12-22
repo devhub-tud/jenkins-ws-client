@@ -1,5 +1,6 @@
 package nl.tudelft.jenkins.client;
 
+import java.net.URL;
 import java.util.List;
 
 import nl.tudelft.jenkins.auth.User;
@@ -16,11 +17,11 @@ import com.google.inject.ImplementedBy;
 public interface JenkinsClient extends AutoCloseable {
 
 	/**
-	 * Get a string representation of URL the Jenkins server root endpoint.
+	 * Get the Jenkins server root endpoint.
 	 * 
-	 * @return A {@link String} representing the URL of the Jenkins server.
+	 * @return A {@link URL} representing the URL of the Jenkins server.
 	 */
-	String getJenkinsEndpoint();
+	URL getJenkinsEndpoint();
 
 	/**
 	 * Create a new build job with the given parameters.
