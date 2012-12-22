@@ -1,9 +1,13 @@
 package nl.tudelft.jenkins.guice;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 
-import javax.inject.Named;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.net.URL;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -21,51 +25,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 
 public class JenkinsWsClientGuiceModule extends AbstractModule {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JenkinsWsClientGuiceModule.class);
 
-	private final String endpoint;
+	private final URL endpoint;
 
 	private final HttpHost jenkinsHost;
 	private final Credentials credentials;
 
-	public JenkinsWsClientGuiceModule(final String hostname, int port, final String path, final String username, final String password) {
+	public JenkinsWsClientGuiceModule(URL jenkinsUrl, final String username, final String password) {
 
-		LOG.trace("Creating new Jenkins WS Client Guice module for: {}@{}:{}{} ...", username, hostname, port, path);
+		LOG.trace("Creating new Jenkins WS Client Guice module for: {}@{} ...", username, jenkinsUrl);
 
-		checkArgument(!isEmpty(hostname), "endpoint must be non-empty");
-		checkArgument(!isEmpty(username), "username must be non-empty");
-		checkArgument(!isEmpty(password), "password must be non-empty");
-
-		final StringBuilder builder = new StringBuilder("http://");
-		builder.append(hostname);
-		builder.append(':');
-		builder.append(port);
-		if (path == null || path.isEmpty()) {
-			builder.append('/');
-		} else {
-			builder.append(path);
-			if (!path.endsWith("/")) {
-				builder.append('/');
-			}
-		}
-
-		endpoint = builder.toString();
+		endpoint = jenkinsUrl;
 		credentials = new UsernamePasswordCredentials(username, password);
-		jenkinsHost = new HttpHost(hostname, port);
+		jenkinsHost = new HttpHost(endpoint.getHost(), endpoint.getPort());
 
 	}
 
 	@Override
-	protected void configure() {}
-
-	@Provides
-	@Named("JenkinsEndpoint")
-	public String getJenkinsEndpoint() {
-		return endpoint;
+	protected void configure() {
+		bind(URL.class).annotatedWith(JenkinsUrl.class).toInstance(endpoint);
 	}
 
 	@Provides
@@ -86,5 +70,10 @@ public class JenkinsWsClientGuiceModule extends AbstractModule {
 
 		return httpContext;
 	}
+
+	@BindingAnnotation
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({FIELD, PARAMETER, METHOD})
+	public static @interface JenkinsUrl {}
 
 }

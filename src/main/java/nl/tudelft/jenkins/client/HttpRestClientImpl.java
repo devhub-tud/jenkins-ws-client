@@ -8,8 +8,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -100,10 +100,10 @@ class HttpRestClientImpl implements HttpRestClient {
 
 			return new HttpRestResponseImpl(client.execute(request, httpContext));
 
-		} catch (ClientProtocolException e) {
+		} catch (HttpResponseException e) {
 			LOG.error("HTTP protocol error", e);
 			request.abort();
-			throw new HttpRestClientException("HTTP protocol error", e);
+			throw new HttpRestClientException("HTTP protocol error", e, e.getStatusCode());
 		} catch (IOException e) {
 			LOG.error("Error or connection abort", e);
 			request.abort();
@@ -111,5 +111,4 @@ class HttpRestClientImpl implements HttpRestClient {
 		}
 
 	}
-
 }

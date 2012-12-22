@@ -2,6 +2,9 @@ package nl.tudelft.jenkins.client;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.net.URL;
+
 import nl.tudelft.jenkins.client.exceptions.NoJenkinsServerException;
 
 import org.apache.http.client.HttpClient;
@@ -36,7 +39,7 @@ public class ClientServerValidationIntegrationTest {
 	public void testThatClientRejectsInvalidServer() throws Exception {
 		boolean exceptionWasThrown = false;
 		try {
-			jenkinsClient = new JenkinsClientImpl(restClient, "http://www.google.com/");
+			jenkinsClient = new JenkinsClientImpl(restClient, new URL("http://www.google.com/"));
 		} catch (NoJenkinsServerException e) {
 			exceptionWasThrown = true;
 		}
@@ -45,7 +48,7 @@ public class ClientServerValidationIntegrationTest {
 
 	@Test
 	public void testThatClientAcceptsValidJenkinsServer() throws Exception {
-		jenkinsClient = new JenkinsClientImpl(restClient, "http://devhub.nl/jenkins");
+		jenkinsClient = new JenkinsClientImpl(restClient, new URL("http://devhub.nl/jenkins"));
 	}
 
 }

@@ -21,6 +21,28 @@ public class UserImpl implements User {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserImpl.class);
 
+	public static User fromXml(String xml) {
+		LOG.trace("Parsing User from xml: " + xml);
+
+		InputStream contents = IOUtils.toInputStream(xml);
+
+		Document document = XmlUtils.createJobDocumentFrom(contents);
+
+		Element idElement = findSingleElementInDocumentByXPath(document, "//user/id");
+		String name = idElement.getText();
+
+		String email;
+		try {
+			Element emailElement = null;
+			emailElement = findSingleElementInDocumentByXPath(document, "//user/property/address");
+			email = emailElement.getText();
+		} catch (XmlUtilsException e) {
+			email = null;
+		}
+
+		return new UserImpl(name, email);
+	}
+
 	private final String name;
 	private final String email;
 
@@ -50,28 +72,6 @@ public class UserImpl implements User {
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-	}
-
-	public static User fromXml(String xml) {
-		LOG.trace("Parsing User from xml: " + xml);
-
-		InputStream contents = IOUtils.toInputStream(xml);
-
-		Document document = XmlUtils.createJobDocumentFrom(contents);
-
-		Element idElement = findSingleElementInDocumentByXPath(document, "//user/id");
-		String name = idElement.getText();
-
-		String email;
-		try {
-			Element emailElement = null;
-			emailElement = findSingleElementInDocumentByXPath(document, "//user/property/address");
-			email = emailElement.getText();
-		} catch (XmlUtilsException e) {
-			email = null;
-		}
-
-		return new UserImpl(name, email);
 	}
 
 }
