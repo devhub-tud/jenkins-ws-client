@@ -1,5 +1,7 @@
 package nl.tudelft.jenkins.client;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class ClientTestApp {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClientTestApp.class);
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MalformedURLException {
 
 		LOG.info("Starting ...");
 
@@ -44,7 +46,7 @@ public class ClientTestApp {
 
 		HttpMethodFactory methodFactory = new HttpMethodFactory();
 		HttpRestClient httpRestClient = new HttpRestClientImpl(httpClient, httpContext, methodFactory);
-		String endpoint = "http://192.168.56.101:8080/";
+		URL endpoint = new URL("http://192.168.56.101:8080/");
 
 		try (JenkinsClient client = new JenkinsClientImpl(httpRestClient, endpoint)) {
 

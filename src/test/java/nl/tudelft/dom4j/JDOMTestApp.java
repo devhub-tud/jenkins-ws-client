@@ -2,8 +2,6 @@ package nl.tudelft.dom4j;
 
 import java.io.InputStream;
 
-import nl.tudelft.commons.IOUtils;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
@@ -21,7 +19,7 @@ public class JDOMTestApp {
 		LOG.info("Starting...");
 
 		final SAXBuilder builder = new SAXBuilder();
-		final InputStream is = IOUtils.class.getResourceAsStream("/nl/tudelft/jenkins/server/job/standard-job.xml");
+		final InputStream is = JDOMTestApp.class.getResourceAsStream("/nl/tudelft/jenkins/server/job/standard-job.xml");
 		final Document document = builder.build(is);
 
 		final XMLOutputter out = new XMLOutputter();

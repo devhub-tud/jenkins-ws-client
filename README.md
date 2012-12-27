@@ -26,3 +26,5 @@ Make sure to release all acquired resources with the **JenkinsClient.close()** m
 
 The JenkinsClient class is [AutoCloseable](http://docs.oracle.com/javase/7/docs/api/java/lang/AutoCloseable.html), so it can be used in a try-with-resources pattern.
 
+## Testing
+To run the integrationtest, copy the `src/test/resources/*.example` to files without the `.example` suffix, and edit them to point the integration tests to your own  Jenkins server.

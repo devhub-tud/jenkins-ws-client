@@ -6,10 +6,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
-import nl.tudelft.commons.IOUtils;
 import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.client.JenkinsClient;
 import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
@@ -19,19 +22,20 @@ import nl.tudelft.jenkins.jobs.Job;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public abstract class AbstractJenkinsIntegrationTestBase {
 
-	private static final String DEFAULT_JENKINS_HOST = "dea.hartveld.com";
-	private static final int DEFAULT_JENKINS_PORT = 80;
-	private static final String DEFEAULT_JENKINS_CONTEXT = "/jenkins";
-	private static final String DEFAULT_JENKINS_USER = jenkinsUser();
-	private static final String DEFAULT_JENKINS_PASS = jenkinsPassword();
+	private static String defaultJenkinsUrl;
+	private static String defaultJenkinsUser;
+	private static String defaultJenkinsPass;
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractJenkinsIntegrationTestBase.class);
 
@@ -41,14 +45,19 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 
 	private JenkinsClient client;
 
+	@BeforeClass
+	public static void loadResources() {
+		defaultJenkinsUrl = jenkinsUrl();
+		defaultJenkinsUser = jenkinsUser();
+		defaultJenkinsPass = jenkinsPassword();
+	}
+
 	@Before
 	public void setUp() throws Exception {
 
-		String host = getEndpoint().host;
-		int port = getEndpoint().port;
-		String context = getEndpoint().context;
+		URL url = new URL(defaultJenkinsUrl);
+		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(url, defaultJenkinsUser, defaultJenkinsPass));
 
-		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(host, port, context, DEFAULT_JENKINS_USER, DEFAULT_JENKINS_PASS));
 		client = injector.getInstance(JenkinsClient.class);
 
 	}
@@ -68,28 +77,6 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 
 		client.close();
 
-	}
-
-	protected JenkinsServiceEndpoint getEndpoint() {
-		return new DefaultJenkinsServiceEndpoint();
-	}
-
-	protected static class JenkinsServiceEndpoint {
-		public final String host;
-		public final int port;
-		public final String context;
-
-		public JenkinsServiceEndpoint(String host, int port, String context) {
-			this.host = host;
-			this.port = port;
-			this.context = context;
-		}
-	}
-
-	private static class DefaultJenkinsServiceEndpoint extends JenkinsServiceEndpoint {
-		public DefaultJenkinsServiceEndpoint() {
-			super(DEFAULT_JENKINS_HOST, DEFAULT_JENKINS_PORT, DEFEAULT_JENKINS_CONTEXT);
-		}
 	}
 
 	public final String getJobName() {
@@ -169,10 +156,15 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 		return readResource("/test.password");
 	}
 
+	private static String jenkinsUrl() {
+		return readResource("/test.jenkinsUrl");
+	}
+
 	private static String readResource(String resource) {
 		try {
-			return IOUtils.readResource(resource);
-		} catch (IOException e) {
+			URI file = AbstractJenkinsIntegrationTestBase.class.getResource(resource).toURI();
+			return Files.toString(new File(file), Charsets.UTF_8);
+		} catch (IOException | URISyntaxException e) {
 			throw new RuntimeException("Failed to read resource: " + resource, e);
 		}
 	}

@@ -5,11 +5,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static nl.tudelft.jenkins.client.JenkinsVersion.SUPPORTED_JENKINS_VERSION;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.auth.UserImpl;
@@ -17,6 +17,7 @@ import nl.tudelft.jenkins.client.exceptions.JenkinsException;
 import nl.tudelft.jenkins.client.exceptions.NoJenkinsServerException;
 import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.client.exceptions.NoSuchUserException;
+import nl.tudelft.jenkins.guice.JenkinsUrl;
 import nl.tudelft.jenkins.jobs.Job;
 import nl.tudelft.jenkins.jobs.JobImpl;
 
@@ -32,24 +33,22 @@ class JenkinsClientImpl implements JenkinsClient {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JenkinsClientImpl.class);
 
-	private final String endpoint;
+	private final URL endpoint;
 	private final HttpRestClient client;
 
 	@Inject
-	JenkinsClientImpl(HttpRestClient client, @Named("JenkinsEndpoint") String endpoint) {
+	JenkinsClientImpl(HttpRestClient client, @JenkinsUrl URL endpoint) {
 
 		LOG.trace("Initializing Jenkins client for endpoint: {}", endpoint);
 
-		checkArgument(isNotEmpty(endpoint), "endpoint must be non-empty");
-
-		this.endpoint = endpoint;
+		this.endpoint = checkNotNull(endpoint, "endpoint");
 		this.client = checkNotNull(client, "client");
 
 		validateServerOnEndpoint();
 	}
 
 	private void validateServerOnEndpoint() {
-		String url = endpoint + "/login";
+		String url = endpoint.toExternalForm() + "/login";
 
 		LOG.trace("Validating Jenkins server on endpoint: {}", url);
 		HttpRestResponse response = client.get(url);
@@ -67,7 +66,7 @@ class JenkinsClientImpl implements JenkinsClient {
 	}
 
 	@Override
-	public String getJenkinsEndpoint() {
+	public URL getJenkinsEndpoint() {
 		return endpoint;
 	}
 
@@ -87,7 +86,7 @@ class JenkinsClientImpl implements JenkinsClient {
 			job.addNotificationRecipient(user);
 		}
 
-		final String url = endpoint + "createItem?name=" + name;
+		final String url = endpoint.toExternalForm() + "/createItem?name=" + name;
 		final String xml = job.asXml();
 
 		LOG.trace("Creating job ...");
@@ -158,7 +157,7 @@ class JenkinsClientImpl implements JenkinsClient {
 
 		LOG.trace("Deleting job {} ...", job);
 
-		final String url = endpoint + "job/" + job.getName() + "/doDelete";
+		final String url = endpoint.toExternalForm() + "/job/" + job.getName() + "/doDelete";
 
 		LOG.trace("Deleting job ...");
 		HttpRestResponse response = client.post(url, "text/plain", "");
@@ -173,7 +172,7 @@ class JenkinsClientImpl implements JenkinsClient {
 	}
 
 	private String urlForJob(final String name) {
-		return endpoint + "job/" + name + "/config.xml";
+		return endpoint.toExternalForm() + "/job/" + name + "/config.xml";
 	}
 
 	private String urlForJob(Job job) {
@@ -184,7 +183,7 @@ class JenkinsClientImpl implements JenkinsClient {
 	public User createUser(String userName, String password, String email, String fullName) {
 		LOG.trace("Creating user: {} - {} - {}", userName, email, fullName);
 
-		String url = endpoint + "securityRealm/createAccountByAdmin";
+		String url = endpoint.toExternalForm() + "/securityRealm/createAccountByAdmin";
 
 		List<NameValuePair> params = new ArrayList<>();
 		params.add(new BasicNameValuePair("username", userName));
@@ -207,7 +206,7 @@ class JenkinsClientImpl implements JenkinsClient {
 	public User retrieveUser(String userName) throws NoSuchUserException {
 		LOG.trace("Retrieving user data: {}", userName);
 
-		String url = endpoint + "user/" + userName + "/api/xml";
+		String url = endpoint.toExternalForm() + "/user/" + userName + "/api/xml";
 
 		HttpRestResponse response = client.get(url);
 
@@ -228,7 +227,7 @@ class JenkinsClientImpl implements JenkinsClient {
 	public void deleteUser(User user) throws NoSuchUserException {
 		LOG.trace("Deleting user: {}", user);
 
-		String url = endpoint + "user/" + user.getName() + "/doDelete";
+		String url = endpoint.toExternalForm() + "/user/" + user.getName() + "/doDelete";
 
 		HttpRestResponse response = client.postForm(url, new ArrayList<NameValuePair>());
 
