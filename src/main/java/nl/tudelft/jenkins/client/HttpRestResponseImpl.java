@@ -186,6 +186,14 @@ class HttpRestResponseImpl implements HttpRestResponse {
 			return value;
 		}
 
+		@Override
+		public String toString() {
+			final ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
+			builder.append("name", name);
+			builder.append("value", value);
+			return builder.toString();
+		}
+
 	}
 
 }
