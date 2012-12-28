@@ -44,9 +44,10 @@ class JenkinsClientImpl implements JenkinsClient {
 		this.endpoint = checkNotNull(endpoint, "endpoint");
 		this.client = checkNotNull(client, "client");
 
-		validateServerOnEndpoint();
+		// validateServerOnEndpoint();
 	}
 
+	@SuppressWarnings("unused")
 	private void validateServerOnEndpoint() {
 		String url = endpoint.toExternalForm() + "/login";
 
