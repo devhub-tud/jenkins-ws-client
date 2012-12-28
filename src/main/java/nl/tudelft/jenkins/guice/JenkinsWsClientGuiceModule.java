@@ -44,6 +44,11 @@ public class JenkinsWsClientGuiceModule extends AbstractModule {
 
 		int port = endpoint.getPort() == -1 ? 80 : endpoint.getPort();
 		jenkinsHost = new HttpHost(endpoint.getHost(), port);
+		LOG.debug("===");
+		LOG.debug("HttpHost: {}", jenkinsHost);
+		LOG.debug("HttpHost.host: {}", endpoint.getHost());
+		LOG.debug("HttpHost.port: {}", endpoint.getPort());
+		LOG.debug("===");
 	}
 
 	@Override
