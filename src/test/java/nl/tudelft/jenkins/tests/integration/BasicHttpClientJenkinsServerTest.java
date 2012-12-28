@@ -3,6 +3,10 @@ package nl.tudelft.jenkins.tests.integration;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.net.URL;
+
+import nl.tudelft.jenkins.client.JenkinsClientFactory;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -19,6 +23,7 @@ import org.slf4j.LoggerFactory;
 public class BasicHttpClientJenkinsServerTest extends AbstractJenkinsIntegrationTestBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BasicHttpClientJenkinsServerTest.class);
+	private static final String JENKINS_URL = "http://devhub.nl/jenkins";
 
 	@Override
 	@Before
@@ -35,12 +40,10 @@ public class BasicHttpClientJenkinsServerTest extends AbstractJenkinsIntegration
 	@Test
 	public void testThatJenkinsServiceOnLocalhostCanBeReached() throws Exception {
 
-		String url = "http://localhost:8080/jenkins/login";
-
-		LOG.info("Checking URL: {}", url);
+		LOG.info("Checking URL: {}", JENKINS_URL + "/login");
 
 		HttpClient client = new DefaultHttpClient();
-		HttpGet get = new HttpGet(url);
+		HttpGet get = new HttpGet(JENKINS_URL);
 
 		HttpResponse response = client.execute(get);
 
@@ -59,6 +62,14 @@ public class BasicHttpClientJenkinsServerTest extends AbstractJenkinsIntegration
 		}
 
 		LOG.info("Version: {}", version);
+
+	}
+
+	@Test
+	public void testThatJenkinsClientAcceptsJenkinsServiceOnLocalhost() throws Exception {
+
+		JenkinsClientFactory factory = new JenkinsClientFactory(new URL(JENKINS_URL), "test", "x");
+		factory.getJenkinsClient();
 
 	}
 
