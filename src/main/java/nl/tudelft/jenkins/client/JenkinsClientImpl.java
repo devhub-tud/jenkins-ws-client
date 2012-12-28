@@ -39,7 +39,7 @@ class JenkinsClientImpl implements JenkinsClient {
 	@Inject
 	JenkinsClientImpl(HttpRestClient client, @JenkinsUrl URL endpoint) {
 
-		LOG.trace("Initializing Jenkins client for endpoint: {}", endpoint);
+		LOG.trace("Initializing Jenkins client for endpoint: {}", endpoint.toExternalForm());
 
 		this.endpoint = checkNotNull(endpoint, "endpoint");
 		this.client = checkNotNull(client, "client");

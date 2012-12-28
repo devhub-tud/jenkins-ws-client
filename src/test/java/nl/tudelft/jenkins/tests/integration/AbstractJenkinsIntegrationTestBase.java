@@ -66,6 +66,8 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 
 	@Before
 	public void setUp() throws Exception {
+		LOG.debug("Creating Guice injector for URL: {} == {}", defaultJenkinsUrl, defaultJenkinsUrl.toExternalForm());
+
 		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(defaultJenkinsUrl, defaultJenkinsUser, defaultJenkinsPass));
 
 		client = injector.getInstance(JenkinsClient.class);
