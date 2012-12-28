@@ -41,6 +41,9 @@ public class JenkinsWsClientGuiceModule extends AbstractModule {
 
 		endpoint = checkNotNull(jenkinsUrl, "jenkinsUrl");
 		credentials = new UsernamePasswordCredentials(username, password);
+		if (endpoint.getPort() == -1) {
+			throw new RuntimeException("port == -1");
+		}
 		jenkinsHost = new HttpHost(endpoint.getHost(), endpoint.getPort());
 
 	}
