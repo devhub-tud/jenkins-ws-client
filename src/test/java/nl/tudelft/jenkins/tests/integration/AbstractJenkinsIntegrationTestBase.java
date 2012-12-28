@@ -33,7 +33,7 @@ import com.google.inject.Injector;
 
 public abstract class AbstractJenkinsIntegrationTestBase {
 
-	private static String defaultJenkinsUrl;
+	private static URL defaultJenkinsUrl;
 	private static String defaultJenkinsUser;
 	private static String defaultJenkinsPass;
 
@@ -46,20 +46,29 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	private JenkinsClient client;
 
 	@BeforeClass
-	public static void loadResources() {
-		defaultJenkinsUrl = jenkinsUrl();
+	public static void loadResources() throws Exception {
+		defaultJenkinsUrl = new URL(jenkinsUrl());
 		defaultJenkinsUser = jenkinsUser();
 		defaultJenkinsPass = jenkinsPassword();
 	}
 
+	protected static final URL getJenkinsURL() {
+		return defaultJenkinsUrl;
+	}
+
+	protected static final String getUserName() {
+		return defaultJenkinsUser;
+	}
+
+	protected static final String getPassword() {
+		return defaultJenkinsPass;
+	}
+
 	@Before
 	public void setUp() throws Exception {
-
-		URL url = new URL(defaultJenkinsUrl);
-		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(url, defaultJenkinsUser, defaultJenkinsPass));
+		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(defaultJenkinsUrl, defaultJenkinsUser, defaultJenkinsPass));
 
 		client = injector.getInstance(JenkinsClient.class);
-
 	}
 
 	@After
