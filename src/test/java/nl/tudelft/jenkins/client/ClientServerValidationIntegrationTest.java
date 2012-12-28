@@ -48,7 +48,7 @@ public class ClientServerValidationIntegrationTest {
 
 	@Test
 	public void testThatClientAcceptsValidJenkinsServer() throws Exception {
-		jenkinsClient = new JenkinsClientImpl(restClient, new URL("http://devhub.nl/jenkins"));
+		jenkinsClient = new JenkinsClientImpl(restClient, new URL("http://devhub.nl/jenkins/"));
 	}
 
 }
