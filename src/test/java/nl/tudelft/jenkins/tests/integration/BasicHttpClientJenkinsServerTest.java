@@ -43,7 +43,7 @@ public class BasicHttpClientJenkinsServerTest extends AbstractJenkinsIntegration
 	}
 
 	@Test
-	public void testThatJenkinsServiceOnLocalhostCanBeReached() throws Exception {
+	public void testThatJenkinsServiceOnConfiguredHostCanBeReached() throws Exception {
 
 		String url = JENKINS_URL + "/login";
 		LOG.info("Checking URL: {}", url);
@@ -77,7 +77,7 @@ public class BasicHttpClientJenkinsServerTest extends AbstractJenkinsIntegration
 	}
 
 	@Test
-	public void testThatJenkinsClientAcceptsJenkinsServiceOnLocalhost() throws Exception {
+	public void testThatJenkinsClientAcceptsJenkinsServiceOnConfiguredHost() throws Exception {
 
 		LOG.info("Testing that JenkinsClientFactory creates JenkinsClient for URL: {}", JENKINS_URL);
 		JenkinsClientFactory factory = new JenkinsClientFactory(JENKINS_URL, JENKINS_USER, JENKINS_PASS);

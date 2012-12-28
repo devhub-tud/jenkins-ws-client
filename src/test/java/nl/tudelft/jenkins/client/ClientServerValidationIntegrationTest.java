@@ -14,8 +14,12 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientServerValidationIntegrationTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ClientServerValidationIntegrationTest.class);
 
 	private HttpRestClient restClient;
 	private JenkinsClient jenkinsClient;
@@ -33,13 +37,20 @@ public class ClientServerValidationIntegrationTest {
 		if (jenkinsClient != null) {
 			jenkinsClient.close();
 		}
+		if (restClient != null) {
+			restClient.close();
+		}
 	}
 
 	@Test
 	public void testThatClientRejectsInvalidServer() throws Exception {
+		String url = "http://www.google.com";
+
+		LOG.trace("Testing that {} is not a Jenkins server (anonymous check)...", url);
+
 		boolean exceptionWasThrown = false;
 		try {
-			jenkinsClient = new JenkinsClientImpl(restClient, new URL("http://www.google.com/"));
+			jenkinsClient = new JenkinsClientImpl(restClient, new URL(url));
 		} catch (NoJenkinsServerException e) {
 			exceptionWasThrown = true;
 		}
@@ -48,7 +59,11 @@ public class ClientServerValidationIntegrationTest {
 
 	@Test
 	public void testThatClientAcceptsValidJenkinsServer() throws Exception {
-		jenkinsClient = new JenkinsClientImpl(restClient, new URL("http://devhub.nl/jenkins/"));
+		String url = "http://devhub.nl/jenkins";
+
+		LOG.trace("Testing that {} is a valid Jenkins server (anonymous check)...", url);
+
+		jenkinsClient = new JenkinsClientImpl(restClient, new URL(url));
 	}
 
 }

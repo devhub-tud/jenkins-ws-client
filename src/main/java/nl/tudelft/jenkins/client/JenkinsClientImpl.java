@@ -61,7 +61,7 @@ class JenkinsClientImpl implements JenkinsClient {
 			}
 		}
 
-		LOG.error("No Jenkins server found on endpoint: {}", url);
+		LOG.error("No Jenkins server found on endpoint: {} - response: {}", url, response);
 		throw new NoJenkinsServerException(url);
 	}
 
