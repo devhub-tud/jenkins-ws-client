@@ -160,15 +160,15 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 	}
 
 	private static String jenkinsUser() {
-		return readResource("/test.username");
+		return readResource("/test.username").trim();
 	}
 
 	private static String jenkinsPassword() {
-		return readResource("/test.password");
+		return readResource("/test.password").trim();
 	}
 
 	private static String jenkinsUrl() {
-		return readResource("/test.jenkinsUrl");
+		return readResource("/test.jenkinsUrl").trim();
 	}
 
 	private static String readResource(String resource) {
