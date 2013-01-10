@@ -12,7 +12,7 @@
       <hudson.plugins.git.UserRemoteConfig>
         <name />
         <refspec />
-        <url>https://github.com/octocat/Hello-World</url>
+        <url>git://github.com/octocat/Hello-World.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -127,7 +127,7 @@
       <useStableBuildAsReference>false</useStableBuildAsReference>
     </hudson.plugins.pmd.PmdReporter>
     <hudson.maven.reporters.MavenMailer>
-      <recipients>jenkins@devhub.nl</recipients>
+      <recipients>team@devhub.nl</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
       <perModuleEmail>false</perModuleEmail>
