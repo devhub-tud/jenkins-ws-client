@@ -115,14 +115,12 @@ public class JobImpl implements Job {
 	}
 
 	@Override
-	public void setNotificationRecipient(final User recipient) {
-		LOG.trace("Setting single notification recipient: {}", recipient);
-
-		checkNotNull(recipient, "recipient must be non-null");
+	public void clearNotificationRecipients() {
+		LOG.trace("Clearing notification recipient list...");
 
 		final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
 
-		recipients.setContent(new Text(recipient.getEmail()));
+		recipients.removeContent();
 	}
 
 	@Override

@@ -82,6 +82,7 @@ class JenkinsClientImpl implements JenkinsClient {
 		final Job job = new JobImpl(name);
 		job.setScmUrl(scmUrl);
 
+		job.clearNotificationRecipients();
 		for (User user : users) {
 			job.addUser(user);
 			job.addNotificationRecipient(user);

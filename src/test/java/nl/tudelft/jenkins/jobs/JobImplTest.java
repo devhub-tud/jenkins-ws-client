@@ -24,6 +24,7 @@ public class JobImplTest {
 	private static final String JOB_SCM_URL = "git://xyz";
 	private static final User JOB_NOTIFICATION_RECIPIENT0 = new UserImpl("person", "person@example.com");
 	private static final User JOB_NOTIFICATION_RECIPIENT1 = new UserImpl("other", "other@otherexample.com");
+
 	private Job job;
 
 	@Before
@@ -33,7 +34,6 @@ public class JobImplTest {
 
 	@Test
 	public void testThatNewlyConsructedJobAsXmlReturnsDefaultJobConfiguration() throws Exception {
-
 		final String jobAsXml = job.asXml();
 
 		final SAXBuilder builder = new SAXBuilder();
@@ -44,7 +44,6 @@ public class JobImplTest {
 		final String defaultJobAsXml = xmlOutputter.outputString(defaultJobDocument);
 
 		assertThat(jobAsXml, is(equalTo(defaultJobAsXml)));
-
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -59,36 +58,41 @@ public class JobImplTest {
 
 	@Test
 	public void testThatScmUrlIsSetCorrectly() throws Exception {
-
 		job.setScmUrl(JOB_SCM_URL);
 
 		final String xml = job.asXml();
 
 		assertThat(xml, containsString("<url>" + JOB_SCM_URL + "</url>"));
+	}
 
+	@Test
+	public void testThatRecipientListCanBeCleared() throws Exception {
+		job.clearNotificationRecipients();
+
+		final String xml = job.asXml();
+
+		assertThat(xml, containsString("<recipients />"));
 	}
 
 	@Test
 	public void testThatSingleRecipientCanBeSet() throws Exception {
-
-		job.setNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
+		job.clearNotificationRecipients();
+		job.addNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
 
 		final String xml = job.asXml();
 
 		assertThat(xml, containsString("<recipients>" + JOB_NOTIFICATION_RECIPIENT0.getEmail() + "</recipients>"));
-
 	}
 
 	@Test
 	public void testThatSecondRecipientCanBeAdded() throws Exception {
-
-		job.setNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
+		job.clearNotificationRecipients();
+		job.addNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
 		job.addNotificationRecipient(JOB_NOTIFICATION_RECIPIENT1);
 
 		final String xml = job.asXml();
 
 		assertThat(xml, containsString("<recipients>" + JOB_NOTIFICATION_RECIPIENT0.getEmail() + " " + JOB_NOTIFICATION_RECIPIENT1.getEmail() + "</recipients>"));
-
 	}
 
 	@Test

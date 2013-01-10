@@ -16,7 +16,7 @@ public interface Job {
 
 	void addUser(User user);
 
-	void setNotificationRecipient(User recipient);
+	void clearNotificationRecipients();
 
 	void addNotificationRecipient(User recipient);
 
