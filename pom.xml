@@ -32,11 +32,13 @@
 		<version.mockito>1.9.5</version.mockito>
 
 		<version.plugin.compiler>3.0</version.plugin.compiler>
+		<version.plugin.surefire>2.12.4</version.plugin.surefire>
 		<version.plugin.jar>2.4</version.plugin.jar>
 		<version.plugin.source>2.2.1</version.plugin.source>
 		<version.plugin.javadoc>2.9</version.plugin.javadoc>
+		<version.plugin.deploy>2.7</version.plugin.deploy>
+		<version.plugin.site>3.2</version.plugin.site>
 		<version.plugin.project-info-reports>2.6</version.plugin.project-info-reports>
-
 		<version.plugin.checkstyle>2.9.1</version.plugin.checkstyle>
 		<version.plugin.findbugs>2.5.2</version.plugin.findbugs>
 		<version.plugin.pmd>2.7.1</version.plugin.pmd>
@@ -236,6 +238,24 @@
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${version.plugin.surefire}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>${version.plugin.deploy}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>${version.plugin.site}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-project-info-reports-plugin</artifactId>
 					<version>${version.plugin.project-info-reports}</version>
 				</plugin>
@@ -254,6 +274,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>${version.plugin.checkstyle}</version>
+				<configuration>
+					<configLocation>checkstyle-btc.xml</configLocation>
+				</configuration>
 			</plugin>
 
 			<plugin>

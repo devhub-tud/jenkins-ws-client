@@ -20,7 +20,7 @@ public interface HttpRestResponse {
 
 	void consume();
 
-	static interface Header {
+	interface Header {
 
 		String getName();
 

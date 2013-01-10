@@ -11,7 +11,7 @@ import nl.tudelft.jenkins.jobs.Job;
 import com.google.inject.ImplementedBy;
 
 /**
- * Jenkins Web Service API Client
+ * Jenkins Web Service API Client.
  */
 @ImplementedBy(JenkinsClientImpl.class)
 public interface JenkinsClient extends AutoCloseable {
