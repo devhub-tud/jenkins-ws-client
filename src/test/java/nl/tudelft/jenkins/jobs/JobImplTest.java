@@ -74,6 +74,11 @@ public class JobImplTest {
 		assertThat(xml, containsString("<recipients />"));
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testThatAddingRecipientWithNullNameThrowsException() {
+		job.addNotificationRecipient(new UserImpl("test", null));
+	}
+
 	@Test
 	public void testThatSingleRecipientCanBeSet() throws Exception {
 		job.clearNotificationRecipients();

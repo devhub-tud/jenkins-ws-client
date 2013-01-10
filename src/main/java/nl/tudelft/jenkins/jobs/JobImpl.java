@@ -128,6 +128,7 @@ public class JobImpl implements Job {
 		LOG.trace("Adding additional notification recipient: {}", recipient);
 
 		checkNotNull(recipient, "recipient must be non-null");
+		checkArgument(isNotEmpty(recipient.getEmail()), "recipient.email must be non-empty");
 
 		final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
 
