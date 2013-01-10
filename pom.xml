@@ -35,6 +35,11 @@
 		<version.plugin.jar>2.4</version.plugin.jar>
 		<version.plugin.source>2.2.1</version.plugin.source>
 		<version.plugin.javadoc>2.9</version.plugin.javadoc>
+		<version.plugin.project-info-reports>2.6</version.plugin.project-info-reports>
+
+		<version.plugin.checkstyle>2.9.1</version.plugin.checkstyle>
+		<version.plugin.findbugs>2.5.2</version.plugin.findbugs>
+		<version.plugin.pmd>2.7.1</version.plugin.pmd>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -225,7 +230,47 @@
 
 		</plugins>
 
+		<pluginManagement>
+
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>${version.plugin.project-info-reports}</version>
+				</plugin>
+
+			</plugins>
+
+		</pluginManagement>
+
 	</build>
+
+	<reporting>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${version.plugin.checkstyle}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${version.plugin.pmd}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>${version.plugin.findbugs}</version>
+			</plugin>
+
+		</plugins>
+
+	</reporting>
 
 	<distributionManagement>
 
