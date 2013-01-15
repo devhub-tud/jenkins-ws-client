@@ -31,7 +31,7 @@
     <ignoreNotifyCommit>false</ignoreNotifyCommit>
     <useShallowClone>false</useShallowClone>
     <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser" />
-    <gitTool>Default git</gitTool>
+    <gitTool>Default</gitTool>
     <submoduleCfg class="list" />
     <relativeTargetDir />
     <reference />
