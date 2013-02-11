@@ -129,6 +129,7 @@ public class JobImpl implements Job {
 
 		checkNotNull(recipient, "recipient must be non-null");
 		checkArgument(isNotEmpty(recipient.getEmail()), "recipient.email must be non-empty");
+		checkArgument(recipient.getEmail().contains("@"), "recipient.email must contain @");
 
 		final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
 
