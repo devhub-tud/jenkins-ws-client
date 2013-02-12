@@ -10,6 +10,7 @@ import nl.tudelft.commons.XmlUtils;
 import nl.tudelft.commons.XmlUtils.XmlUtilsException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jdom2.Document;
@@ -67,6 +68,30 @@ public class UserImpl implements User {
 	@Override
 	public String getEmail() {
 		return email;
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null) {
+			return false;
+		}
+
+		if (this == that) {
+			return true;
+		}
+
+		if (that instanceof User) {
+			return getName().equals(((User) that).getName());
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+				.append(name)
+				.hashCode();
 	}
 
 	@Override
