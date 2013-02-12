@@ -62,6 +62,16 @@ class JobPermissionMatrixImpl implements JobPermissionMatrix {
 
 	}
 
+	@Override
+	public void removeAllPermissionsForUser(User user) {
+		checkNotNull(user, "user must be non-null");
+		checkArgument(isNotEmpty(user.getName()), "user.name must be non-empty");
+
+		checkArgument(permissions.containsKey(user.getName()), "No permissions set for user: " + user);
+
+		permissions.remove(user.getName());
+	}
+
 	private void addPermissionToDocument(String name, JobAuthMatrixPermission permission) {
 
 		LOG.trace("Adding permission to document for user: {}: {}", name, permission);

@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
@@ -22,8 +23,14 @@ public class JobImplTest {
 
 	private static final String JOB_NAME = "X";
 	private static final String JOB_SCM_URL = "git://xyz";
-	private static final User JOB_NOTIFICATION_RECIPIENT0 = new UserImpl("person", "person@example.com");
-	private static final User JOB_NOTIFICATION_RECIPIENT1 = new UserImpl("other", "other@otherexample.com");
+
+	private static final String NAME0 = "person";
+	private static final String NAME1 = "other";
+	private static final String EMAIL0 = "person@example.com";
+	private static final String EMAIL1 = "other@otherexample.com";
+
+	private static final User USER0 = new UserImpl(NAME0, EMAIL0);
+	private static final User USER1 = new UserImpl(NAME1, EMAIL1);
 
 	private Job job;
 
@@ -82,35 +89,64 @@ public class JobImplTest {
 	@Test
 	public void testThatSingleRecipientCanBeSet() throws Exception {
 		job.clearNotificationRecipients();
-		job.addNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
+		job.addNotificationRecipient(USER0);
 
 		final String xml = job.asXml();
 
-		assertThat(xml, containsString("<recipients>" + JOB_NOTIFICATION_RECIPIENT0.getEmail() + "</recipients>"));
+		assertThat(xml, containsString("<recipients>" + USER0.getEmail() + "</recipients>"));
 	}
 
 	@Test
 	public void testThatSecondRecipientCanBeAdded() throws Exception {
 		job.clearNotificationRecipients();
-		job.addNotificationRecipient(JOB_NOTIFICATION_RECIPIENT0);
-		job.addNotificationRecipient(JOB_NOTIFICATION_RECIPIENT1);
+		job.addNotificationRecipient(USER0);
+		job.addNotificationRecipient(USER1);
 
 		final String xml = job.asXml();
 
-		assertThat(xml, containsString("<recipients>" + JOB_NOTIFICATION_RECIPIENT0.getEmail() + " " + JOB_NOTIFICATION_RECIPIENT1.getEmail() + "</recipients>"));
+		assertThat(xml, containsString("<recipients>" + USER0.getEmail() + " " + USER1.getEmail() + "</recipients>"));
 	}
 
 	@Test
 	public void testThatUserCanBeAdded() throws Exception {
-		User user = new UserImpl("name", "email");
-		job.addUser(user);
+		job.addUser(USER0);
 
 		List<User> users = job.getUsers();
 
 		assertThat(users, hasSize(1));
 
 		User u = users.iterator().next();
-		assertThat(u.getName(), is(equalTo(user.getName())));
+		assertThat(u.getName(), is(equalTo(USER0.getName())));
 	}
 
+	@Test
+	public void testThatUserCanBeRemovedFromJob() throws Exception {
+		job.addUser(USER0);
+		job.addUser(USER1);
+
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME0 + "</permission>"));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME0 + "</permission>"));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME1 + "</permission>"));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME1 + "</permission>"));
+
+		User user = new UserImpl(NAME0, EMAIL0);
+		job.removeUser(user);
+
+		assertThat(job.asXml(), not(containsString("<permission>hudson.model.Item.Read:" + NAME0 + "</permission>")));
+		assertThat(job.asXml(), not(containsString("<permission>hudson.model.Item.Workspace:" + NAME0 + "</permission>")));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME1 + "</permission>"));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME1 + "</permission>"));
+	}
+
+	@Test
+	public void testThatNotificationRecipientCanBeRemoved() throws Exception {
+		job.clearNotificationRecipients();
+
+		job.addNotificationRecipient(USER0);
+		job.addNotificationRecipient(USER1);
+
+		job.removeNotificationRecipient(USER0);
+
+		assertThat(job.asXml(), containsString("<recipients>other@otherexample.com</recipients>"));
+	}
 }

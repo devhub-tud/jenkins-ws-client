@@ -16,9 +16,13 @@ public interface Job {
 
 	void addUser(User user);
 
+	void removeUser(User user);
+
 	void clearNotificationRecipients();
 
 	void addNotificationRecipient(User recipient);
+
+	void removeNotificationRecipient(User recipient);
 
 	String asXml();
 

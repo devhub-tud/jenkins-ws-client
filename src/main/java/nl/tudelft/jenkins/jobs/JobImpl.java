@@ -6,6 +6,7 @@ import static nl.tudelft.commons.XmlUtils.findSingleElementInDocumentByXPath;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import nl.tudelft.commons.XmlUtils;
@@ -95,6 +96,26 @@ public class JobImpl implements Job {
 		}
 	}
 
+	@Override
+	public void removeUser(User user) {
+		LOG.trace("Removing user: {}", user);
+
+		checkNotNull(user, "user must be non-null");
+
+		permissionMatrix.removeAllPermissionsForUser(user);
+
+		Element authMatrix = findSingleElementInDocumentByXPath(document, XPATH_PROPERTIES_SECURITY);
+
+		Iterator<Element> iterator = authMatrix.getChildren().iterator();
+		while (iterator.hasNext()) {
+			Element permission = iterator.next();
+			if (permission.getText().endsWith(user.getName())) {
+				iterator.remove();
+			}
+		}
+
+	}
+
 	private void addDevHubPermissionsForUser(User user) {
 		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DISCOVER);
 		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_READ);
@@ -143,6 +164,29 @@ public class JobImpl implements Job {
 		} else {
 			throw new RuntimeException("Element on path " + XPATH_NOTIFICATION_RECIPIENTS + " contains multiple children. Single (text) element expected");
 		}
+	}
+
+	@Override
+	public void removeNotificationRecipient(User recipient) {
+		LOG.trace("Removing notification recipient: {}", recipient);
+
+		checkNotNull(recipient, "recipient must be non-null");
+		checkArgument(isNotEmpty(recipient.getEmail()), "recipient.email must be non-empty");
+		checkArgument(recipient.getEmail().contains("@"), "recipient.email must contain @");
+
+		Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
+		String text = recipients.getText();
+		String[] strings = text.split(" ");
+
+		StringBuilder newText = new StringBuilder();
+		for (String string : strings) {
+			if (!string.isEmpty() && !string.equals(recipient.getEmail())) {
+				newText.append(string);
+				newText.append(" ");
+			}
+		}
+
+		recipients.setText(newText.toString().trim());
 	}
 
 	@Override
