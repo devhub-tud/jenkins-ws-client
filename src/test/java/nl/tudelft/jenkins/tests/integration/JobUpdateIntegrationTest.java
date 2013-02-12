@@ -30,7 +30,7 @@ public class JobUpdateIntegrationTest extends AbstractJenkinsIntegrationTestBase
 
 		assertThat(createdJob.getUsers(), is(empty()));
 
-		createdJob.addUser(user);
+		createdJob.addPermissionsForUser(user);
 		updateJob(createdJob);
 
 		Job retrievedJob = retrieveJob();

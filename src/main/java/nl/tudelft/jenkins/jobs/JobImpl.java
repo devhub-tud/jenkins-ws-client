@@ -84,7 +84,7 @@ public class JobImpl implements Job {
 	}
 
 	@Override
-	public void addUser(User user) {
+	public void addPermissionsForUser(User user) {
 		LOG.trace("Adding user with full permissions: {}", user);
 
 		checkNotNull(user, "user");
@@ -97,7 +97,7 @@ public class JobImpl implements Job {
 	}
 
 	@Override
-	public void removeUser(User user) {
+	public void removePermissionsForUser(User user) {
 		LOG.trace("Removing user: {}", user);
 
 		checkNotNull(user, "user must be non-null");

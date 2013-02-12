@@ -14,9 +14,9 @@ public interface Job {
 
 	List<User> getUsers();
 
-	void addUser(User user);
+	void addPermissionsForUser(User user);
 
-	void removeUser(User user);
+	void removePermissionsForUser(User user);
 
 	void clearNotificationRecipients();
 

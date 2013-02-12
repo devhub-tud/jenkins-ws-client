@@ -82,12 +82,25 @@ public class JobImplTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testThatAddingRecipientWithNullNameThrowsException() {
+	public void testThatAddingRecipientWithNullEmailThrowsException() {
 		job.addNotificationRecipient(new UserImpl("test", null));
 	}
 
 	@Test
-	public void testThatSingleRecipientCanBeSet() throws Exception {
+	public void testThatAddingRecipientWithEmailWithoutAtSignThrowsException() {
+		User recipient = new UserImpl("my-name", "my-email");
+
+		boolean exceptionWasCaught = false;
+		try {
+			job.addNotificationRecipient(recipient);
+		} catch (IllegalArgumentException e) {
+			exceptionWasCaught = true;
+		}
+		assertThat(exceptionWasCaught, is(true));
+	}
+
+	@Test
+	public void testThatSingleNotificationRecipientCanBeSet() throws Exception {
 		job.clearNotificationRecipients();
 		job.addNotificationRecipient(USER0);
 
@@ -97,7 +110,7 @@ public class JobImplTest {
 	}
 
 	@Test
-	public void testThatSecondRecipientCanBeAdded() throws Exception {
+	public void testThatSecondNotificationRecipientCanBeAdded() throws Exception {
 		job.clearNotificationRecipients();
 		job.addNotificationRecipient(USER0);
 		job.addNotificationRecipient(USER1);
@@ -105,37 +118,6 @@ public class JobImplTest {
 		final String xml = job.asXml();
 
 		assertThat(xml, containsString("<recipients>" + USER0.getEmail() + " " + USER1.getEmail() + "</recipients>"));
-	}
-
-	@Test
-	public void testThatUserCanBeAdded() throws Exception {
-		job.addUser(USER0);
-
-		List<User> users = job.getUsers();
-
-		assertThat(users, hasSize(1));
-
-		User u = users.iterator().next();
-		assertThat(u.getName(), is(equalTo(USER0.getName())));
-	}
-
-	@Test
-	public void testThatUserCanBeRemovedFromJob() throws Exception {
-		job.addUser(USER0);
-		job.addUser(USER1);
-
-		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME0 + "</permission>"));
-		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME0 + "</permission>"));
-		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME1 + "</permission>"));
-		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME1 + "</permission>"));
-
-		User user = new UserImpl(NAME0, EMAIL0);
-		job.removeUser(user);
-
-		assertThat(job.asXml(), not(containsString("<permission>hudson.model.Item.Read:" + NAME0 + "</permission>")));
-		assertThat(job.asXml(), not(containsString("<permission>hudson.model.Item.Workspace:" + NAME0 + "</permission>")));
-		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME1 + "</permission>"));
-		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME1 + "</permission>"));
 	}
 
 	@Test
@@ -149,4 +131,36 @@ public class JobImplTest {
 
 		assertThat(job.asXml(), containsString("<recipients>other@otherexample.com</recipients>"));
 	}
+
+	@Test
+	public void testThatUserPermissionsCanBeAdded() throws Exception {
+		job.addPermissionsForUser(USER0);
+
+		List<User> users = job.getUsers();
+
+		assertThat(users, hasSize(1));
+
+		User u = users.iterator().next();
+		assertThat(u.getName(), is(equalTo(USER0.getName())));
+	}
+
+	@Test
+	public void testThatUserPermissionsCanBeRemovedFromJob() throws Exception {
+		job.addPermissionsForUser(USER0);
+		job.addPermissionsForUser(USER1);
+
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME0 + "</permission>"));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME0 + "</permission>"));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME1 + "</permission>"));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME1 + "</permission>"));
+
+		User user = new UserImpl(NAME0, EMAIL0);
+		job.removePermissionsForUser(user);
+
+		assertThat(job.asXml(), not(containsString("<permission>hudson.model.Item.Read:" + NAME0 + "</permission>")));
+		assertThat(job.asXml(), not(containsString("<permission>hudson.model.Item.Workspace:" + NAME0 + "</permission>")));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Read:" + NAME1 + "</permission>"));
+		assertThat(job.asXml(), containsString("<permission>hudson.model.Item.Workspace:" + NAME1 + "</permission>"));
+	}
+
 }

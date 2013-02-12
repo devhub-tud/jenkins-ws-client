@@ -84,7 +84,7 @@ class JenkinsClientImpl implements JenkinsClient {
 
 		job.clearNotificationRecipients();
 		for (User user : users) {
-			job.addUser(user);
+			job.addPermissionsForUser(user);
 			job.addNotificationRecipient(user);
 		}
 
