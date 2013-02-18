@@ -42,6 +42,7 @@
 		<version.plugin.checkstyle>2.9.1</version.plugin.checkstyle>
 		<version.plugin.findbugs>2.5.2</version.plugin.findbugs>
 		<version.plugin.pmd>2.7.1</version.plugin.pmd>
+		<version.plugin.jacoco>0.6.2.201302030002</version.plugin.jacoco>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -230,6 +231,26 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 
 		<pluginManagement>
@@ -258,6 +279,12 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-project-info-reports-plugin</artifactId>
 					<version>${version.plugin.project-info-reports}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${version.plugin.jacoco}</version>
 				</plugin>
 
 			</plugins>
@@ -289,6 +316,11 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>${version.plugin.findbugs}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
 			</plugin>
 
 		</plugins>
