@@ -16,9 +16,8 @@ class JobDocumentProvider {
 
 	public static Document createDefaultJobDocument() {
 		LOG.trace("Creating default job document ...");
-
 		final InputStream is = JobDocumentProvider.class.getResourceAsStream(DEFAULT_JOB_FILE_NAME);
-		return XmlUtils.createJobDocumentFrom(is);
+        return XmlUtils.createJobDocumentFrom(is);
 	}
 
 	private JobDocumentProvider() {}

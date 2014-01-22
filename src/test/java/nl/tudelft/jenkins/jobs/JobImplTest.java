@@ -65,7 +65,8 @@ public class JobImplTest {
 
 	@Test
 	public void testThatScmUrlIsSetCorrectly() throws Exception {
-		job.setScmUrl(JOB_SCM_URL);
+        GitScmConfig scmConfig = new GitScmConfig(JOB_SCM_URL);
+		job.setScmConfig(scmConfig);
 
 		final String xml = job.asXml();
 

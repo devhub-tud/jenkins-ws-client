@@ -13,7 +13,6 @@ import nl.tudelft.commons.XmlUtils;
 import nl.tudelft.jenkins.auth.User;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jdom2.Content;
@@ -26,201 +25,194 @@ import org.slf4j.LoggerFactory;
 
 public class JobImpl implements Job {
 
-	/**
-	 * If true, Jobs are created with limited permissions, specifically tailored
-	 * for use with DevHub.
-	 */
-	private static final boolean DEVHUB = true;
+    /**
+     * If true, Jobs are created with limited permissions, specifically tailored
+     * for use with DevHub.
+     */
+    private static final boolean DEVHUB = true;
 
-	private static final Logger LOG = LoggerFactory.getLogger(JobImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobImpl.class);
 
-	private final String name;
-	private final Document document;
+    private final String name;
+    private final Document document;
 
-	private final JobPermissionMatrix permissionMatrix;
+    private final JobPermissionMatrix permissionMatrix;
 
-	private static final String XPATH_PROPERTIES_SECURITY = "//maven2-moduleset/properties/hudson.security.AuthorizationMatrixProperty";
-	private static final String XPATH_NOTIFICATION_RECIPIENTS = "//maven2-moduleset/reporters/hudson.maven.reporters.MavenMailer/recipients";
-	private static final String XPATH_SCM_GIT_URL = "//maven2-moduleset/scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url";
+    private static final String XPATH_PROPERTIES_SECURITY = "//maven2-moduleset/properties/hudson.security.AuthorizationMatrixProperty";
+    private static final String XPATH_NOTIFICATION_RECIPIENTS = "//maven2-moduleset/reporters/hudson.maven.reporters.MavenMailer/recipients";
+    private static final String XPATH_SCM_GIT_URL = "//maven2-moduleset/scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url";
 
-	public JobImpl(final String name) {
-		this(name, JobDocumentProvider.createDefaultJobDocument());
-	}
+    public JobImpl(final String name) {
+        this(name, JobDocumentProvider.createDefaultJobDocument());
+    }
 
-	public JobImpl(final String name, final Document document) {
-		checkArgument(isNotEmpty(name), "name must be non-empty");
+    public JobImpl(final String name, final Document document) {
+        checkArgument(isNotEmpty(name), "name must be non-empty");
 
-		this.name = name;
-		this.document = checkNotNull(document, "document must be non-null");
+        this.name = name;
+        this.document = checkNotNull(document, "document must be non-null");
 
-		final Element element = findSingleElementInDocumentByXPath(document, XPATH_PROPERTIES_SECURITY);
-		permissionMatrix = JobPermissionMatrixImpl.fromElement(element);
-	}
+        final Element element = findSingleElementInDocumentByXPath(document, XPATH_PROPERTIES_SECURITY);
+        permissionMatrix = JobPermissionMatrixImpl.fromElement(element);
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public void setScmUrl(final String scmUrl) {
-		LOG.trace("Setting SCM URL to: {}", scmUrl);
+    @Override
+    public void setScmConfig(final ScmConfig scmConfig) {
+        LOG.trace("Setting SCM URL to: {}", scmConfig.toString());
+        final Element root = document.getRootElement();
+        root.addContent(scmConfig.getXmlContent());
 
-		checkArgument(isNotEmpty(scmUrl), "scmUrl must be non-empty");
+    }
 
-		final Element url = findSingleElementInDocumentByXPath(document, XPATH_SCM_GIT_URL);
 
-		url.setContent(new Text(scmUrl));
-	}
+    @Override
+    public List<User> getUsers() {
+        return permissionMatrix.getUsers();
+    }
 
-	@Override
-	public String getScmUrl() {
-		throw new NotImplementedException();
-	}
+    @Override
+    public void addPermissionsForUser(User user) {
+        LOG.trace("Adding user with full permissions: {}", user);
 
-	@Override
-	public List<User> getUsers() {
-		return permissionMatrix.getUsers();
-	}
+        checkNotNull(user, "user");
 
-	@Override
-	public void addPermissionsForUser(User user) {
-		LOG.trace("Adding user with full permissions: {}", user);
+        if (DEVHUB) {
+            addDevHubPermissionsForUser(user);
+        } else {
+            addFullPermissionsForUser(user);
+        }
+    }
 
-		checkNotNull(user, "user");
+    @Override
+    public void removePermissionsForUser(User user) {
+        LOG.trace("Removing user: {}", user);
 
-		if (DEVHUB) {
-			addDevHubPermissionsForUser(user);
-		} else {
-			addFullPermissionsForUser(user);
-		}
-	}
+        checkNotNull(user, "user must be non-null");
 
-	@Override
-	public void removePermissionsForUser(User user) {
-		LOG.trace("Removing user: {}", user);
+        permissionMatrix.removeAllPermissionsForUser(user);
 
-		checkNotNull(user, "user must be non-null");
+        Element authMatrix = findSingleElementInDocumentByXPath(document, XPATH_PROPERTIES_SECURITY);
 
-		permissionMatrix.removeAllPermissionsForUser(user);
+        Iterator<Element> iterator = authMatrix.getChildren().iterator();
+        while (iterator.hasNext()) {
+            Element permission = iterator.next();
+            if (permission.getText().endsWith(user.getName())) {
+                iterator.remove();
+            }
+        }
 
-		Element authMatrix = findSingleElementInDocumentByXPath(document, XPATH_PROPERTIES_SECURITY);
+    }
 
-		Iterator<Element> iterator = authMatrix.getChildren().iterator();
-		while (iterator.hasNext()) {
-			Element permission = iterator.next();
-			if (permission.getText().endsWith(user.getName())) {
-				iterator.remove();
-			}
-		}
+    private void addDevHubPermissionsForUser(User user) {
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DISCOVER);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_READ);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_WORKSPACE);
+    }
 
-	}
+    private void addFullPermissionsForUser(User user) {
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_BUILD);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_CANCEL);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_CONFIGURE);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DELETE);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DISCOVER);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_READ);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_WORKSPACE);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.RUN_DELETE);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.RUN_UPDATE);
+        permissionMatrix.addPermission(user, JobAuthMatrixPermission.SCM_TAG);
+    }
 
-	private void addDevHubPermissionsForUser(User user) {
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DISCOVER);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_READ);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_WORKSPACE);
-	}
+    @Override
+    public void clearNotificationRecipients() {
+        LOG.trace("Clearing notification recipient list...");
 
-	private void addFullPermissionsForUser(User user) {
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_BUILD);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_CANCEL);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_CONFIGURE);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DELETE);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DISCOVER);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_READ);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_WORKSPACE);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.RUN_DELETE);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.RUN_UPDATE);
-		permissionMatrix.addPermission(user, JobAuthMatrixPermission.SCM_TAG);
-	}
+        final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
 
-	@Override
-	public void clearNotificationRecipients() {
-		LOG.trace("Clearing notification recipient list...");
+        recipients.removeContent();
+    }
 
-		final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
+    @Override
+    public void addNotificationRecipient(final User recipient) {
+        LOG.trace("Adding additional notification recipient: {}", recipient);
 
-		recipients.removeContent();
-	}
+        checkNotNull(recipient, "recipient must be non-null");
+        checkArgument(isNotEmpty(recipient.getEmail()), "recipient.email must be non-empty");
+        checkArgument(recipient.getEmail().contains("@"), "recipient.email must contain @");
 
-	@Override
-	public void addNotificationRecipient(final User recipient) {
-		LOG.trace("Adding additional notification recipient: {}", recipient);
+        final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
 
-		checkNotNull(recipient, "recipient must be non-null");
-		checkArgument(isNotEmpty(recipient.getEmail()), "recipient.email must be non-empty");
-		checkArgument(recipient.getEmail().contains("@"), "recipient.email must contain @");
+        final int contentSize = recipients.getContentSize();
+        if (contentSize == 0) {
+            recipients.setContent(new Text(recipient.getEmail()));
+        } else if (contentSize == 1) {
+            final Content content = recipients.getContent(0);
+            final String value = content.getValue();
+            recipients.setContent(new Text(value + " " + recipient.getEmail()));
+        } else {
+            throw new RuntimeException("Element on path " + XPATH_NOTIFICATION_RECIPIENTS + " contains multiple children. Single (text) element expected");
+        }
+    }
 
-		final Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
+    @Override
+    public void removeNotificationRecipient(User recipient) {
+        LOG.trace("Removing notification recipient: {}", recipient);
 
-		final int contentSize = recipients.getContentSize();
-		if (contentSize == 0) {
-			recipients.setContent(new Text(recipient.getEmail()));
-		} else if (contentSize == 1) {
-			final Content content = recipients.getContent(0);
-			final String value = content.getValue();
-			recipients.setContent(new Text(value + " " + recipient.getEmail()));
-		} else {
-			throw new RuntimeException("Element on path " + XPATH_NOTIFICATION_RECIPIENTS + " contains multiple children. Single (text) element expected");
-		}
-	}
+        checkNotNull(recipient, "recipient must be non-null");
+        checkArgument(isNotEmpty(recipient.getEmail()), "recipient.email must be non-empty");
+        checkArgument(recipient.getEmail().contains("@"), "recipient.email must contain @");
 
-	@Override
-	public void removeNotificationRecipient(User recipient) {
-		LOG.trace("Removing notification recipient: {}", recipient);
+        Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
+        String text = recipients.getText();
+        String[] strings = text.split(" ");
 
-		checkNotNull(recipient, "recipient must be non-null");
-		checkArgument(isNotEmpty(recipient.getEmail()), "recipient.email must be non-empty");
-		checkArgument(recipient.getEmail().contains("@"), "recipient.email must contain @");
+        StringBuilder newText = new StringBuilder();
+        for (String string : strings) {
+            if (!string.isEmpty() && !string.equals(recipient.getEmail())) {
+                newText.append(string);
+                newText.append(" ");
+            }
+        }
 
-		Element recipients = findSingleElementInDocumentByXPath(document, XPATH_NOTIFICATION_RECIPIENTS);
-		String text = recipients.getText();
-		String[] strings = text.split(" ");
+        recipients.setText(newText.toString().trim());
+    }
 
-		StringBuilder newText = new StringBuilder();
-		for (String string : strings) {
-			if (!string.isEmpty() && !string.equals(recipient.getEmail())) {
-				newText.append(string);
-				newText.append(" ");
-			}
-		}
+    @Override
+    public String asXml() {
 
-		recipients.setText(newText.toString().trim());
-	}
+        LOG.trace("Generating XML representation...");
 
-	@Override
-	public String asXml() {
+        final XMLOutputter outputter = new XMLOutputter();
+        final String xml = outputter.outputString(document);
 
-		LOG.trace("Generating XML representation...");
+        return xml;
 
-		final XMLOutputter outputter = new XMLOutputter();
-		final String xml = outputter.outputString(document);
+    }
 
-		return xml;
+    @Override
+    public String toString() {
+        final ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
 
-	}
+        builder.append("name", name);
 
-	@Override
-	public String toString() {
-		final ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        return builder.toString();
+    }
 
-		builder.append("name", name);
+    public static Job fromXml(final String name, final String xml) {
+        LOG.trace("Creating job named {} from xml ...", name);
 
-		return builder.toString();
-	}
+        checkArgument(isNotEmpty(name), "name must be non-empty");
+        checkArgument(isNotEmpty(xml), "xml must be non-empty");
 
-	public static Job fromXml(final String name, final String xml) {
-		LOG.trace("Creating job named {} from xml ...", name);
+        final InputStream is = IOUtils.toInputStream(xml);
 
-		checkArgument(isNotEmpty(name), "name must be non-empty");
-		checkArgument(isNotEmpty(xml), "xml must be non-empty");
+        final Document document = XmlUtils.createJobDocumentFrom(is);
 
-		final InputStream is = IOUtils.toInputStream(xml);
-
-		final Document document = XmlUtils.createJobDocumentFrom(is);
-
-		return new JobImpl(name, document);
-	}
+        return new JobImpl(name, document);
+    }
 
 }

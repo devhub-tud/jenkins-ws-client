@@ -13,31 +13,33 @@ import nl.tudelft.jenkins.auth.User;
 import nl.tudelft.jenkins.auth.UserImpl;
 import nl.tudelft.jenkins.jobs.Job;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class JobUpdateIntegrationTest extends AbstractJenkinsIntegrationTestBase {
 
-	private static final String USER_NAME = "u";
-	private static final String USER_EMAIL = "e@mail";
+    private static final String USER_NAME = "u";
+    private static final String USER_EMAIL = "e@mail";
 
-	@Test
-	public void testThatJobCanBeUpdated() throws Exception {
-		User user = new UserImpl(USER_NAME, USER_EMAIL);
+    @Test
+    public void testThatJobCanBeUpdated() throws Exception {
+        User user = new UserImpl(USER_NAME, USER_EMAIL);
 
-		List<User> users = newArrayList();
+        List<User> users = newArrayList();
 
-		Job createdJob = createJob(JOB_SCM_URL, users);
+        Job createdJob = createJob(JOB_SCM_URL, users);
 
-		assertThat(createdJob.getUsers(), is(empty()));
+        assertThat(createdJob.getUsers(), is(empty()));
 
-		createdJob.addPermissionsForUser(user);
-		updateJob(createdJob);
+        createdJob.addPermissionsForUser(user);
+        updateJob(createdJob);
 
-		Job retrievedJob = retrieveJob();
+        Job retrievedJob = retrieveJob();
 
-		assertThat(retrievedJob.getUsers(), hasSize(1));
-		assertThat(retrievedJob.getUsers().get(0).getName(), is(equalTo(user.getName())));
+        assertThat(retrievedJob.getUsers(), hasSize(1));
+        assertThat(retrievedJob.getUsers().get(0).getName(), is(equalTo(user.getName())));
 
-	}
+    }
 
 }

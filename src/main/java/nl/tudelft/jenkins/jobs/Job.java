@@ -6,24 +6,22 @@ import nl.tudelft.jenkins.auth.User;
 
 public interface Job {
 
-	String getName();
+    String getName();
 
-	String getScmUrl();
+    void setScmConfig(ScmConfig scmConfig);
 
-	void setScmUrl(String string);
+    List<User> getUsers();
 
-	List<User> getUsers();
+    void addPermissionsForUser(User user);
 
-	void addPermissionsForUser(User user);
+    void removePermissionsForUser(User user);
 
-	void removePermissionsForUser(User user);
+    void clearNotificationRecipients();
 
-	void clearNotificationRecipients();
+    void addNotificationRecipient(User recipient);
 
-	void addNotificationRecipient(User recipient);
+    void removeNotificationRecipient(User recipient);
 
-	void removeNotificationRecipient(User recipient);
-
-	String asXml();
+    String asXml();
 
 }

@@ -11,10 +11,12 @@ import nl.tudelft.jenkins.auth.UserImpl;
 import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.jobs.Job;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Ignore
 public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegrationTestBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JobCreationAndRemovalIntegrationTest.class);
@@ -38,7 +40,7 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 
 		job = retrieveJob();
 
-		deleteJob(job);
+		//deleteJob(job);
 
 	}
 

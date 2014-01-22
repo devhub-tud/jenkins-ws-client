@@ -14,11 +14,13 @@ import java.net.URL;
 import java.util.List;
 
 import nl.tudelft.jenkins.auth.User;
+import nl.tudelft.jenkins.jobs.GitScmConfig;
 import nl.tudelft.jenkins.client.JenkinsClient;
 import nl.tudelft.jenkins.client.exceptions.NoSuchJobException;
 import nl.tudelft.jenkins.guice.JenkinsWsClientGuiceModule;
 import nl.tudelft.jenkins.jobs.Job;
 
+import nl.tudelft.jenkins.jobs.SVNScmConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -33,151 +35,152 @@ import com.google.inject.Injector;
 
 public abstract class AbstractJenkinsIntegrationTestBase {
 
-	private static URL defaultJenkinsUrl;
-	private static String defaultJenkinsUser;
-	private static String defaultJenkinsPass;
+    private static URL defaultJenkinsUrl;
+    private static String defaultJenkinsUser;
+    private static String defaultJenkinsPass;
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractJenkinsIntegrationTestBase.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractJenkinsIntegrationTestBase.class);
 
-	protected static final String JOB_SCM_URL = "git://github.com/dlhartveld/mini-project.git";
+    protected static final String JOB_SCM_URL = "git://github.com/dlhartveld/mini-project.git";
 
-	private Injector injector;
+    private Injector injector;
 
-	private JenkinsClient client;
+    private JenkinsClient client;
 
-	@BeforeClass
-	public static void loadResources() throws Exception {
-		defaultJenkinsUrl = new URL(jenkinsUrl());
-		defaultJenkinsUser = jenkinsUser();
-		defaultJenkinsPass = jenkinsPassword();
-	}
+    @BeforeClass
+    public static void loadResources() throws Exception {
+        defaultJenkinsUrl = new URL(jenkinsUrl());
+        defaultJenkinsUser = jenkinsUser();
+        defaultJenkinsPass = jenkinsPassword();
+    }
 
-	protected static final URL getJenkinsURL() {
-		return defaultJenkinsUrl;
-	}
+    protected static final URL getJenkinsURL() {
+        return defaultJenkinsUrl;
+    }
 
-	protected static final String getUserName() {
-		return defaultJenkinsUser;
-	}
+    protected static final String getUserName() {
+        return defaultJenkinsUser;
+    }
 
-	protected static final String getPassword() {
-		return defaultJenkinsPass;
-	}
+    protected static final String getPassword() {
+        return defaultJenkinsPass;
+    }
 
-	@Before
-	public void setUp() throws Exception {
-		LOG.debug("Creating Guice injector for URL: {} == {}", defaultJenkinsUrl, defaultJenkinsUrl.toExternalForm());
+    @Before
+    public void setUp() throws Exception {
+        LOG.debug("Creating Guice injector for URL: {} == {}", defaultJenkinsUrl, defaultJenkinsUrl.toExternalForm());
 
-		injector = Guice.createInjector(new JenkinsWsClientGuiceModule(defaultJenkinsUrl, defaultJenkinsUser, defaultJenkinsPass));
+        injector = Guice.createInjector(new JenkinsWsClientGuiceModule(defaultJenkinsUrl, defaultJenkinsUser, defaultJenkinsPass));
 
-		client = injector.getInstance(JenkinsClient.class);
-	}
+        client = injector.getInstance(JenkinsClient.class);
+    }
 
-	@After
-	public void tearDown() throws Exception {
+    //@After
+    public void tearDown() throws Exception {
 
-		LOG.trace("Cleaning up job ...");
+        LOG.trace("Cleaning up job ...");
 
-		try
-		{
-			final Job job = retrieveJob();
-			deleteJob(job);
-		} catch (final NoSuchJobException e) {
-			LOG.trace("Job was already cleaned up");
-		}
+        try {
+            final Job job = retrieveJob();
+            deleteJob(job);
+        } catch (final NoSuchJobException e) {
+            LOG.trace("Job was already cleaned up");
+        }
 
-		client.close();
+        client.close();
 
-	}
+    }
 
-	public final String getJobName() {
-		return "test-job-" + this.getClass().getCanonicalName();
-	}
+    public final String getJobName() {
+        return "test-job-" + this.getClass().getCanonicalName();
+    }
 
-	protected final Job createJob(final String scmUrl, final List<User> users) {
+    protected final Job createJob(final String scmUrl, final List<User> users) {
 
-		LOG.trace("Creating job with name: {}, scmUrl: {} ...", getJobName(), scmUrl);
+        LOG.trace("Creating job with name: {}, scmUrl: {} ...", getJobName(), scmUrl);
 
-		final Job job = client.createJob(getJobName(), scmUrl, users);
+        SVNScmConfig scmConfig = new SVNScmConfig("http://local/project", "username", "password");
+        //GitScmConfig scmConfig = new GitScmConfig("http://git");
+        final Job job = client.createJob(getJobName(), scmConfig, users);
 
-		assertThatJobNameIsCorrectForCurrentTest(job);
+        assertThatJobNameIsCorrectForCurrentTest(job);
 
-		return job;
+        return job;
 
-	}
+    }
 
-	protected final Job retrieveJob() {
+    protected final Job retrieveJob() {
 
-		LOG.trace("Retrieving job with name: {} ...", getJobName());
+        LOG.trace("Retrieving job with name: {} ...", getJobName());
 
-		return client.retrieveJob(getJobName());
+        return client.retrieveJob(getJobName());
 
-	}
+    }
 
-	protected void updateJob(Job job) {
+    protected void updateJob(Job job) {
 
-		LOG.trace("Updating job with name: {} ...", getJobName());
+        LOG.trace("Updating job with name: {} ...", getJobName());
 
-		checkNotNull(job, "job");
-		checkArgument(StringUtils.equals(job.getName(), getJobName()), "Job name not equal to test case job name");
+        checkNotNull(job, "job");
+        checkArgument(StringUtils.equals(job.getName(), getJobName()), "Job name not equal to test case job name");
 
-		client.updateJob(job);
+        client.updateJob(job);
 
-	}
+    }
 
-	protected final void deleteJob(final Job job) {
+    protected final void deleteJob(final Job job) {
 
-		LOG.trace("Deleting job with name: {} ...", getJobName());
+        LOG.trace("Deleting job with name: {} ...", getJobName());
 
-		assertThatJobNameIsCorrectForCurrentTest(job);
+        assertThatJobNameIsCorrectForCurrentTest(job);
 
-		client.deleteJob(job);
+        client.deleteJob(job);
 
-	}
+    }
 
-	private void assertThatJobNameIsCorrectForCurrentTest(final Job job) {
-		assertThat("Job name must be set to a test-specific value", job.getName(), is(equalTo(getJobName())));
-	}
+    private void assertThatJobNameIsCorrectForCurrentTest(final Job job) {
+        assertThat("Job name must be set to a test-specific value", job.getName(), is(equalTo(getJobName())));
+    }
 
-	protected User createUser(String userName, String password, String email, String fullName) {
+    protected User createUser(String userName, String password, String email, String fullName) {
 
-		LOG.trace("Creating user: {} - {} - {}", userName, email, fullName);
+        LOG.trace("Creating user: {} - {} - {}", userName, email, fullName);
 
-		return client.createUser(userName, password, email, fullName);
+        return client.createUser(userName, password, email, fullName);
 
-	}
+    }
 
-	protected void deleteUser(User user) {
-		LOG.trace("Deleting user: {}", user);
+    protected void deleteUser(User user) {
+        LOG.trace("Deleting user: {}", user);
 
-		client.deleteUser(user);
-	}
+        client.deleteUser(user);
+    }
 
-	protected User retrieveUser(String userName) {
-		LOG.trace("Retrieving user: {}", userName);
+    protected User retrieveUser(String userName) {
+        LOG.trace("Retrieving user: {}", userName);
 
-		return client.retrieveUser(userName);
-	}
+        return client.retrieveUser(userName);
+    }
 
-	private static String jenkinsUser() {
-		return readResource("/test.username").trim();
-	}
+    private static String jenkinsUser() {
+        return readResource("/test.username").trim();
+    }
 
-	private static String jenkinsPassword() {
-		return readResource("/test.password").trim();
-	}
+    private static String jenkinsPassword() {
+        return readResource("/test.password").trim();
+    }
 
-	private static String jenkinsUrl() {
-		return readResource("/test.jenkinsUrl").trim();
-	}
+    private static String jenkinsUrl() {
+        return readResource("/test.jenkinsUrl").trim();
+    }
 
-	private static String readResource(String resource) {
-		try {
-			URI file = AbstractJenkinsIntegrationTestBase.class.getResource(resource).toURI();
-			return Files.toString(new File(file), Charsets.UTF_8);
-		} catch (IOException | URISyntaxException e) {
-			throw new RuntimeException("Failed to read resource: " + resource, e);
-		}
-	}
+    private static String readResource(String resource) {
+        try {
+            URI file = AbstractJenkinsIntegrationTestBase.class.getResource(resource).toURI();
+            return Files.toString(new File(file), Charsets.UTF_8);
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException("Failed to read resource: " + resource, e);
+        }
+    }
 
 }
