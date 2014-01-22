@@ -15,7 +15,7 @@ import nl.tudelft.jenkins.jobs.ScmConfig;
  * Jenkins Web Service API Client.
  */
 @ImplementedBy(JenkinsClientImpl.class)
-public interface JenkinsClient extends AutoCloseable {
+public interface JenkinsClient{
 
     /**
      * Validate the Jenkins server is ok
@@ -111,7 +111,6 @@ public interface JenkinsClient extends AutoCloseable {
      * Make sure the {@link JenkinsClient} instance is not reused after calling
      * this method.
      */
-    @Override
     void close();
 
 }

@@ -7,7 +7,7 @@ import org.apache.http.NameValuePair;
 import com.google.inject.ImplementedBy;
 
 @ImplementedBy(HttpRestClientImpl.class)
-public interface HttpRestClient extends AutoCloseable {
+public interface HttpRestClient {
 
 	HttpRestResponse put(String url, String contentType, String contents);
 
@@ -19,7 +19,6 @@ public interface HttpRestClient extends AutoCloseable {
 
 	HttpRestResponse delete(String url);
 
-	@Override
 	void close();
 
 }

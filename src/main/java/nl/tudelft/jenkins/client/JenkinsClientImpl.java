@@ -67,7 +67,7 @@ class JenkinsClientImpl implements JenkinsClient {
     @Override
     public Job createJob(final String name, final ScmConfig scmConfig, final List<User> users) {
 
-        LOG.trace("Creating job {} @ {} ...", name, scmConfig);
+        LOG.trace("Creating job {0} @ {1} ...", name, scmConfig);
 
         checkArgument(isNotEmpty(name), "name must be non-empty");
 
