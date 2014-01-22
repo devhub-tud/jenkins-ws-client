@@ -18,11 +18,7 @@ public class GitScmConfig extends ScmConfig {
 
 
     public GitScmConfig(String address) {
-        super(address, null, null);
-    }
-
-    private GitScmConfig(String address, String username, String password) {
-        super(address, username, password);
+        super(address);
     }
 
     @Override

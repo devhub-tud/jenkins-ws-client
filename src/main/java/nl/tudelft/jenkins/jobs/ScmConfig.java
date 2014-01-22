@@ -13,33 +13,11 @@ public abstract class ScmConfig {
 
     private String address;
 
-    private String username;
-
-    private String password;
-
     public abstract Element getXmlContent();
 
-    protected ScmConfig(String address, String username, String password) {
+    public ScmConfig(String address) {
         checkNotNull(address, "address must be non-null");
         this.address = address;
-        this.username = username;
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getAddress() {

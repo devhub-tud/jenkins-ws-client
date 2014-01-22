@@ -17,8 +17,8 @@ public class SVNScmConfig extends ScmConfig {
     private final static String SVNCONFIG_XML_PATH = "/nl/tudelft/jenkins/jobs/SVNScmConfig.xml";
     private static final String XPATH_SCM_SVN_URL = "//scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote";
 
-    public SVNScmConfig(String address, String username, String password) {
-        super(address, username, password);
+    public SVNScmConfig(String address) {
+        super(address);
     }
 
 

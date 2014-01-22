@@ -99,7 +99,7 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 
         LOG.trace("Creating job with name: {}, scmUrl: {} ...", getJobName(), scmUrl);
 
-        SVNScmConfig scmConfig = new SVNScmConfig("http://local/project", "username", "password");
+        SVNScmConfig scmConfig = new SVNScmConfig("http://local/project");
         //GitScmConfig scmConfig = new GitScmConfig("http://git");
         final Job job = client.createJob(getJobName(), scmConfig, users);
 
