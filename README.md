@@ -30,3 +30,4 @@ The JenkinsClient class is [AutoCloseable](http://docs.oracle.com/javase/7/docs/
 To run the integrationtest, copy the `src/test/resources/*.example` to files without the `.example` suffix, and edit them to point the integration tests to your own  Jenkins server.
 
 Make sure that these files do *not* end with a newline!
+
