@@ -178,7 +178,9 @@ public abstract class AbstractJenkinsIntegrationTestBase {
         try {
             URI file = AbstractJenkinsIntegrationTestBase.class.getResource(resource).toURI();
             return Files.toString(new File(file), Charsets.UTF_8);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read resource: " + resource, e);
+        } catch (URISyntaxException e) {
             throw new RuntimeException("Failed to read resource: " + resource, e);
         }
     }

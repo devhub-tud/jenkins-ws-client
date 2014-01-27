@@ -26,12 +26,12 @@ class JobPermissionMatrixImpl implements JobPermissionMatrix {
 
 	private JobPermissionMatrixImpl(Element element) {
 		this.element = checkNotNull(element, "element");
-		permissions = new HashMap<>();
+		permissions = new HashMap<String, JobPermissionMask>();
 	}
 
 	@Override
 	public List<User> getUsers() {
-		final List<User> users = new ArrayList<>();
+		final List<User> users = new ArrayList<User>();
 
 		for (String username : permissions.keySet()) {
 			users.add(new UserImpl(username));

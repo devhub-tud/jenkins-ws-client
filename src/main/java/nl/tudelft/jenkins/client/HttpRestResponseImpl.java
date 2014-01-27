@@ -65,7 +65,7 @@ class HttpRestResponseImpl implements HttpRestResponse {
 	}
 
 	private List<Header> getHeaders() {
-		final Map<String, String> headers = new HashMap<>();
+		final Map<String, String> headers = new HashMap<String, String>();
 		for (org.apache.http.Header header : response.getAllHeaders()) {
 			if (headers.containsKey(header.getName())) {
 				headers.put(header.getName(), headers.get(header.getName()) + header.getValue());
@@ -74,7 +74,7 @@ class HttpRestResponseImpl implements HttpRestResponse {
 			}
 		}
 
-		final List<Header> result = new ArrayList<>();
+		final List<Header> result = new ArrayList<Header>();
 		for (Entry<String, String> header : headers.entrySet()) {
 			result.add(new HttpRestResponseHeaderImpl(header.getKey(), header.getValue()));
 		}
@@ -117,7 +117,7 @@ class HttpRestResponseImpl implements HttpRestResponse {
 	private static Map<String, Header> headersOf(HttpResponse response) {
 		LOG.trace("Parsing headers...");
 
-		final Map<String, String> headers = new HashMap<>();
+		final Map<String, String> headers = new HashMap<String, String>();
 		for (org.apache.http.Header header : response.getAllHeaders()) {
 			String name = header.getName();
 			String value = header.getValue();
@@ -134,7 +134,7 @@ class HttpRestResponseImpl implements HttpRestResponse {
 			}
 		}
 
-		Map<String, Header> result = new HashMap<>();
+		Map<String, Header> result = new HashMap<String, Header>();
 		for (Entry<String, String> header : headers.entrySet()) {
 			String name = header.getKey();
 			String value = header.getValue();

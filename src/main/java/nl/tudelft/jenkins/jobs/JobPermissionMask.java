@@ -10,7 +10,7 @@ public class JobPermissionMask {
 	private final List<JobAuthMatrixPermission> permissions;
 
 	public JobPermissionMask() {
-		permissions = new ArrayList<>();
+		permissions = new ArrayList<JobAuthMatrixPermission>();
 	}
 
 	public void addPermission(JobAuthMatrixPermission permission) {

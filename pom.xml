@@ -13,7 +13,7 @@
 	</prerequisites>
 
 	<properties>
-		<version.java>1.7</version.java>
+		<version.java>1.6</version.java>
 
 		<version.slf4j-api>1.7.2</version.slf4j-api>
 		<version.logback-classic>1.0.9</version.logback-classic>

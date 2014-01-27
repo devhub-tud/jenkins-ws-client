@@ -24,6 +24,7 @@ import nl.tudelft.jenkins.jobs.ScmConfig;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +92,7 @@ class JenkinsClientImpl implements JenkinsClient {
             response.consume();
             return job;
         } else {
-            String message = "Error occurred while attempting to create job: " + response.getStatusLine();
+            String message = "Error occurred while attempting to create job: " + response.getContents();
             LOG.error(message);
             throw new JenkinsException(message);
         }
@@ -180,7 +181,7 @@ class JenkinsClientImpl implements JenkinsClient {
 
         String url = endpoint.toExternalForm() + "/securityRealm/createAccountByAdmin";
 
-        List<NameValuePair> params = new ArrayList<>();
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("username", userName));
         params.add(new BasicNameValuePair("password1", password));
         params.add(new BasicNameValuePair("password2", password));
@@ -189,7 +190,7 @@ class JenkinsClientImpl implements JenkinsClient {
 
         HttpRestResponse response = client.postForm(url, params);
 
-        if (response.isFound()) {
+        if (response.isFound() || response.isOk() ) {
             return retrieveUser(userName);
         } else {
             LOG.error("Failed to create user: {}", response.getStatusLine());
