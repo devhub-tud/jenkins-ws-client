@@ -28,8 +28,7 @@ class HttpMethodFactory {
 
 		StringEntity entity = createStringEntityForContents(ContentType.APPLICATION_FORM_URLENCODED.getMimeType(), "");
 
-		String encoding = ContentType.APPLICATION_FORM_URLENCODED.getCharset().name();
-		String completeUrl = url + '?' + URLEncodedUtils.format(params, encoding);
+		String completeUrl = url + '?' + URLEncodedUtils.format(params, "UTF-8");
 
 		HttpPost post = new HttpPost(completeUrl);
 		post.setEntity(entity);
@@ -74,7 +73,7 @@ class HttpMethodFactory {
 	private StringEntity createStringEntityForContents(String contentType, String contents) {
 		StringEntity entity;
 		try {
-			entity = new StringEntity(contents, "UTF-8");
+			entity = new StringEntity(contents);
 		} catch (UnsupportedEncodingException e) {
 			LOG.error("Unsupported encoding in contents", e);
 			throw new HttpMethodFactoryException("Unsupported encoding in contents", e);
