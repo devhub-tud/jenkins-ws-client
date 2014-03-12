@@ -39,7 +39,7 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 
 		Job job = createJob(JOB_SCM_URL, USERS);
 
-		job = retrieveJob();
+		//job = retrieveJob();
 
 		//deleteJob(job);
 

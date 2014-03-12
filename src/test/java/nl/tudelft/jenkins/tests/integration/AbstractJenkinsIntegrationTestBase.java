@@ -92,16 +92,22 @@ public abstract class AbstractJenkinsIntegrationTestBase {
     }
 
     public final String getJobName() {
-        return "test-job-" + this.getClass().getCanonicalName();
+        return "这是中文的名的";
     }
 
     protected final Job createJob(final String scmUrl, final List<User> users) {
+        return createJob(getJobName(),  scmUrl, users);
+    }
 
-        LOG.trace("Creating job with name: {}, scmUrl: {} ...", getJobName(), scmUrl);
+    protected final Job createJob(final String jobName ,final String scmUrl, final List<User> users) {
+
+        LOG.trace("Creating job with name: {}, scmUrl: {} ...",jobName, scmUrl);
+
+
 
         SVNScmConfig scmConfig = new SVNScmConfig("http://local/project");
         //GitScmConfig scmConfig = new GitScmConfig("http://git");
-        final Job job = client.createJob(getJobName(), scmConfig, users);
+        final Job job = client.createJob(jobName, scmConfig, users);
 
         assertThatJobNameIsCorrectForCurrentTest(job);
 

@@ -5,8 +5,25 @@
 
 	<groupId>nl.tudelft</groupId>
 	<artifactId>jenkins-ws-client</artifactId>
-	<version>0.12-SNAPSHOT</version>
+	<version>0.13-SNAPSHOT</version>
 	<name>Java wrapper for the Jenkins web service API</name>
+    <distributionManagement>
+        <repository>
+            <id>koala-releases</id>
+            <name>koala-releases</name>
+            <url>http://nexus.openkoala.org:8081/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>koala-snapshots</id>
+            <name>koala-snapshots</name>
+            <url>http://nexus.openkoala.org:8081/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <site>
+            <id>koala-site</id>
+            <name>Maven Project Site</name>
+            <url>dav:http://mvnsite.openkoala.org/</url>
+        </site>
+    </distributionManagement>
 
 	<prerequisites>
 		<maven>3.0.4</maven>
@@ -266,49 +283,7 @@
 
 	</build>
 
-	<reporting>
 
-		<plugins>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${version.plugin.checkstyle}</version>
-				<configuration>
-					<configLocation>checkstyle-btc.xml</configLocation>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>${version.plugin.pmd}</version>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>${version.plugin.findbugs}</version>
-			</plugin>
-
-		</plugins>
-
-	</reporting>
-
-	<distributionManagement>
-
-		<snapshotRepository>
-			<id>devhub-snapshots</id>
-			<name>Internal snapshots</name>
-			<url>http://dea.hartveld.com/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-
-		<repository>
-			<id>devhub-snapshots</id>
-			<name>Internal releases</name>
-			<url>http://dea.hartveld.com/nexus/content/repositories/releases</url>
-		</repository>
-
-	</distributionManagement>
 
 </project>

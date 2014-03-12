@@ -17,8 +17,8 @@ import java.util.List;
 @Ignore
 public class UserCreationAndRemovealIntegrationTest extends AbstractJenkinsIntegrationTestBase {
 
-    private static final User USER0 = new UserImpl("person", "person@example.com");
-    private static final User USER1 = new UserImpl("other", "other@example.com");
+    private static final User USER0 = new UserImpl("persxon", "person@example.com");
+    private static final User USER1 = new UserImpl("other国", "other@example.com");
 
     private static final List<User> USERS = new ArrayList<User>();
 
@@ -30,13 +30,11 @@ public class UserCreationAndRemovealIntegrationTest extends AbstractJenkinsInteg
     @Test
     public void testCreateUser() throws Exception {
 
-        Job job = createJob(JOB_SCM_URL, USERS);
+        String username = "bbbbxxb4443";
 
-        job = retrieveJob();
+        User user = createUser(username, "password", "ij@dd.com", "全名中国xx");
 
-        User user = createUser("user1", "password", "ij@dd.com", "fllName");
-
-        User retrieveUser = retrieveUser("user1");
+        User retrieveUser = retrieveUser(username);
 
         assert user.getEmail().equals(retrieveUser.getEmail());
 

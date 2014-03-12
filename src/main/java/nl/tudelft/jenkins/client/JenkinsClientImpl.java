@@ -24,7 +24,6 @@ import nl.tudelft.jenkins.jobs.ScmConfig;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +71,6 @@ class JenkinsClientImpl implements JenkinsClient {
 
         checkArgument(isNotEmpty(name), "name must be non-empty");
 
-
         final Job job = new JobImpl(name);
         job.setScmConfig(scmConfig);
 
@@ -86,13 +84,13 @@ class JenkinsClientImpl implements JenkinsClient {
         final String xml = job.asXml();
 
         LOG.trace("Creating job ...");
-        HttpRestResponse response = client.post(url, "application/xml", xml);
+        HttpRestResponse response = client.post(url, "text/xml", xml);
 
         if (response.isOk()) {
             response.consume();
             return job;
         } else {
-            String message = "Error occurred while attempting to create job: " + response.getContents();
+            String message = "Error occurred while attempting to create job: " + response.getStatusLine();
             LOG.error(message);
             throw new JenkinsException(message);
         }
