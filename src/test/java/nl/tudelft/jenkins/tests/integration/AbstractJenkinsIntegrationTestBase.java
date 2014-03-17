@@ -45,7 +45,7 @@ public abstract class AbstractJenkinsIntegrationTestBase {
 
     private Injector injector;
 
-    private JenkinsClient client;
+    protected JenkinsClient client;
 
     @BeforeClass
     public static void loadResources() throws Exception {
@@ -73,6 +73,7 @@ public abstract class AbstractJenkinsIntegrationTestBase {
         injector = Guice.createInjector(new JenkinsWsClientGuiceModule(defaultJenkinsUrl, defaultJenkinsUser, defaultJenkinsPass));
 
         client = injector.getInstance(JenkinsClient.class);
+
     }
 
     //@After
@@ -92,7 +93,7 @@ public abstract class AbstractJenkinsIntegrationTestBase {
     }
 
     public final String getJobName() {
-        return "这是中文的名的";
+        return "这是中文的名的11";
     }
 
     protected final Job createJob(final String scmUrl, final List<User> users) {

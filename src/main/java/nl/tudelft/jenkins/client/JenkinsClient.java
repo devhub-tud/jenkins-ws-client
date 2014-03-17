@@ -106,6 +106,13 @@ public interface JenkinsClient{
     void deleteUser(User user) throws NoSuchUserException;
 
     /**
+     *
+     * @param script
+     * @return
+     */
+    String sendScriptText(String script);
+
+    /**
      * Release all acquired resources.
      * <p/>
      * Make sure the {@link JenkinsClient} instance is not reused after calling

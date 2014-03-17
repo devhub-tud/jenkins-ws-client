@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,7 +24,9 @@ import nl.tudelft.jenkins.jobs.JobImpl;
 import nl.tudelft.jenkins.jobs.ScmConfig;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.http.NameValuePair;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -229,6 +232,23 @@ class JenkinsClientImpl implements JenkinsClient {
             LOG.trace("Failed to delete user: {}", response.getStatusLine());
             throw new JenkinsException("Failed to delete user: " + response.getStatusLine());
         }
+    }
+
+    @Override
+    public String sendScriptText(String script) {
+        String url = endpoint.toExternalForm() + "/scriptText/";
+
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("script", script));
+        HttpRestResponse response = client.postForm(url, params);
+
+        if (!response.isOk()) {
+            LOG.trace("Failed send scriptText", response.getStatusLine());
+            throw new JenkinsException("Failed send scriptText: " + response.getStatusLine());
+        }
+
+        return response.getContents();
     }
 
     @Override

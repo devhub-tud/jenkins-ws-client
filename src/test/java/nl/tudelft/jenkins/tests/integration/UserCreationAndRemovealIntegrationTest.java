@@ -39,5 +39,6 @@ public class UserCreationAndRemovealIntegrationTest extends AbstractJenkinsInteg
         assert user.getEmail().equals(retrieveUser.getEmail());
 
 
+
     }
 }

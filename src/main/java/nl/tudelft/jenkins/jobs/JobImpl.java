@@ -75,7 +75,7 @@ public class JobImpl implements Job {
         return permissionMatrix.getUsers();
     }
 
-    @Override
+    @Deprecated
     public void addPermissionsForUser(User user) {
         LOG.trace("Adding user with full permissions: {}", user);
 
@@ -108,13 +108,13 @@ public class JobImpl implements Job {
 
     }
 
-    private void addDevHubPermissionsForUser(User user) {
+    public void addDevHubPermissionsForUser(User user) {
         permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_DISCOVER);
         permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_READ);
         permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_WORKSPACE);
     }
 
-    private void addFullPermissionsForUser(User user) {
+    public void addFullPermissionsForUser(User user) {
         permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_BUILD);
         permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_CANCEL);
         permissionMatrix.addPermission(user, JobAuthMatrixPermission.JOB_CONFIGURE);

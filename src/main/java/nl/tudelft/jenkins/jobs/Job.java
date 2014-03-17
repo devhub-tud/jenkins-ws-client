@@ -14,6 +14,10 @@ public interface Job {
 
     void addPermissionsForUser(User user);
 
+    void addDevHubPermissionsForUser(User user);
+
+    void addFullPermissionsForUser(User user);
+
     void removePermissionsForUser(User user);
 
     void clearNotificationRecipients();

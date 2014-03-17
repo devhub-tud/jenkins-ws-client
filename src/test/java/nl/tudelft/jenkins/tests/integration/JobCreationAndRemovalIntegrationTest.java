@@ -42,6 +42,19 @@ public class JobCreationAndRemovalIntegrationTest extends AbstractJenkinsIntegra
 		//job = retrieveJob();
 
 		//deleteJob(job);
+        client.validateServerOnEndpoint();
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("import hudson.security.ProjectMatrixAuthorizationStrategy;");
+        builder.append(" import jenkins.model.Jenkins;")
+        .append("ProjectMatrixAuthorizationStrategy authorizations = Jenkins.getInstance().getAuthorizationStrategy();")
+        .append("authorizations.add(Jenkins.ADMINISTER, \"admin\");")
+        .append("authorizations.add(Jenkins.READ, \"hhhhh\");")
+        .append("Jenkins.getInstance().setAuthorizationStrategy(authorizations)")
+        ;
+        client.sendScriptText(builder.toString());
+
+
 
 	}
 
